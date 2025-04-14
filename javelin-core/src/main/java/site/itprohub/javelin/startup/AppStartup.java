@@ -29,11 +29,9 @@ public class AppStartup {
         } catch (IOException e) {
             throw new RuntimeException("Failed to start HTTP server", e);
         }
-           
 
         JavelinContext context = new JavelinContext();
         new Router().registerRoutes(server, controllers, context);
-
         server.start();
 
         System.out.println("🌐 HTTP Server started at http://localhost:" + port);
