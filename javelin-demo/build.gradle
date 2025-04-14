@@ -1,0 +1,18 @@
+plugins {
+    id 'application'
+}
+
+group = 'site.itprohub'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':javelin-core')
+}
+
+application {
+    mainClass = 'demo.Application'  // 你 demo 项目的入口类
+}
