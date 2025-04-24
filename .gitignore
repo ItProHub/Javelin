@@ -1,0 +1,90 @@
+# 编译输出
+/target/
+/bin/
+/build/
+/out/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# 日志文件
+*.log
+*.log.*
+logs/
+
+# 依赖管理 (Maven/Gradle)
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+gradle-app.setting
+
+# IDE 文件
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+.DS_Store
+*.orig
+
+# Eclipse 文件
+.settings/
+.project
+.classpath
+.factorypath
+
+# NetBeans 文件
+nbproject/
+nbactions.xml
+nb-configuration.xml
+
+# 本地配置文件
+*.properties
+*.yml
+*.yaml
+!application*.yml
+!bootstrap*.yml
+
+# 系统文件
+*.bak
+*.tmp
+*.temp
+*~
+~$*
+
+# 测试相关
+/test-output/
+/reports/
+/surefire-reports/
+/failsafe-reports/
+/test-results/
+
+# 其他
+*.cache
+*.diff
+*.patch
+*.pid
+*.seed
+*.hprof
+*.pyc
+*.db
+*.sqlite
+*.sql
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
