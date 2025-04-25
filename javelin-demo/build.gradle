@@ -2,17 +2,23 @@ plugins {
     id 'application'
 }
 
-group = 'site.itprohub'
-version = '1.0.0'
+application {
+    // 设置 mainClass 以确保可以启动程序
+    mainClass = 'demo.Application'
+}
 
 repositories {
-    mavenCentral()
+    mavenCentral()  // 使用 Maven Central 仓库
 }
+
 
 dependencies {
+    // 添加对 javelin-core 的依赖
     implementation project(':javelin-core')
+
+    // 其他可能的依赖
 }
 
-application {
-    mainClass = 'demo.Application'  // 你 demo 项目的入口类
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["-parameters"]
 }

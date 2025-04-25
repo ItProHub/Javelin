@@ -2,71 +2,104 @@ package site.itprohub.javelin.rest;
 
 import site.itprohub.javelin.annotations.*;
 import site.itprohub.javelin.context.JavelinContext;
+import site.itprohub.javelin.http.Pipeline.NHttpContext;
+import site.itprohub.javelin.utils.UrlExtensions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.sun.net.httpserver.HttpServer;
-import java.io.OutputStream;
 import java.lang.annotation.*;
 
 public class Router {
 
+    private final List<RouteDefinition> dynamicRoutes = new ArrayList<>();
+
+    /**
+     * 注册路由
+     * 
+     * @param server  HttpServer 实例
+     * @param classes 包含控制器类的集合
+     * @param context JavelinContext 实例
+     **/
     public void registerRoutes(HttpServer server, Set<Class<?>> classes, JavelinContext context) {
 
         for (Class<?> clazz : classes) {
             if (!clazz.isAnnotationPresent(RestController.class))
                 continue;
-                
+
             Object controllerInstance = context.getBean(clazz);
 
             for (Method method : clazz.getDeclaredMethods()) {
                 Annotation[] annotations = method.getAnnotations();
 
                 for (Annotation annotation : annotations) {
-                   HttpMethodMapping mapping = annotation.annotationType().getAnnotation(HttpMethodMapping.class);
+                    HttpMethodMapping mapping = annotation.annotationType().getAnnotation(HttpMethodMapping.class);
                     if (mapping != null) {
-                       String httpMethod = mapping.method();
-                       
-                       try{
-                           String path = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                           registerHandler(server, path, httpMethod, controllerInstance, method);
-                       } catch (Exception e) {
-                           e.printStackTrace(); 
-                       }
+                        String httpMethod = mapping.method();
+
+                        try {
+                            String path = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                            Pattern pathPattern = UrlExtensions.compilePathPattern(path);
+                            List<String> pathVaribleNames = UrlExtensions.extractPathVaribleNames(path);
+                            dynamicRoutes.add(new RouteDefinition(httpMethod, path, pathPattern, pathVaribleNames, controllerInstance, method));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }
             }
+
+            registerHandler(server);
+
         }
-       
+
     }
 
 
-    private void registerHandler(HttpServer server, String path, String expectedMethod, Object controllerInstance, Method method) {
-        server.createContext(path, exchange -> {
-            // 校验请求方法的合法性
-            if (!exchange.getRequestMethod().equalsIgnoreCase(expectedMethod)) {
-                exchange.sendResponseHeaders(405, -1);
+    /**
+     * 注册路由处理程序
+     * @param server HttpServer 实例* 
+     **/
+    private void registerHandler(HttpServer server) {
+        // 动态路由处理程序
+        server.createContext("/", exchange -> {
+            String requestPath = exchange.getRequestURI().getPath();
+            RouteDefinition matchedRoute = findMatchRoute(requestPath);
+
+            if (matchedRoute == null) {
+                // 匹配不到404
+                exchange.sendResponseHeaders(404, -1);
                 return;
             }
 
+            NHttpContext httpContext = new NHttpContext(exchange, matchedRoute);
+            
             try {
-                Object result = method.invoke(controllerInstance);
-
-                byte[] response = result.toString().getBytes();
-
-                exchange.sendResponseHeaders(200, response.length);
-                try (OutputStream os = exchange.getResponseBody()){
-                    os.write(response);
-                }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-                exchange.sendResponseHeaders(500, 0);
+                ActionExecutor.INSTANCE.execute(httpContext);
+            } catch (Exception e) {
+                httpContext.lastException = e;
             }
+            
         });
     }
 
+    private RouteDefinition findMatchRoute(String requestPath) {
+        return dynamicRoutes.stream()
+            .filter(route -> matchRoute(requestPath, route))
+            .findFirst()
+            .orElse(null);
+    }
 
+    private boolean matchRoute(String requestPath, RouteDefinition route) {
+       Matcher matcher = route.pathPattern.matcher(requestPath);
+       return matcher.matches();
+    }
 
 }
