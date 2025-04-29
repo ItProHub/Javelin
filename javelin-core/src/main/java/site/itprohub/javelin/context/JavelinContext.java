@@ -1,8 +1,9 @@
 package site.itprohub.javelin.context;
 
-import site.itprohub.javelin.annotations.Inject;
+import site.itprohub.javelin.annotations.*;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class JavelinContext {
@@ -39,9 +40,48 @@ public class JavelinContext {
                 args.add(getBean(paramType)); // 递归构建依赖
             }
 
-            return (T) injectConstructor.newInstance(args.toArray());
+            T instance = (T) injectConstructor.newInstance(args.toArray());
+            callPostConstruct(instance); // 调用@PostConstruct方法            
+            return instance;
         }  catch (Exception e) {
             throw new RuntimeException("Failed to instantiate: " + clazz.getName(), e); 
         }
     }
+
+    private void callPostConstruct(Object instance) throws Exception {
+        Method postConstructMethod = findPostConstructMethod(instance.getClass());
+        if (postConstructMethod != null) {
+            postConstructMethod.invoke(instance);
+        }
+    }
+
+    private Method findPostConstructMethod(Class<?> clazz) {
+        for(Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(PostConstruct.class)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    public void callPreDestroy(Object instance) {
+        Method preDestroyMethod = findPreDestroyMethod(instance.getClass());
+        if (preDestroyMethod!= null) {
+            try {
+                preDestroyMethod.invoke(instance);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to call predestroy: " + preDestroyMethod.getName(), e); 
+            }
+        }
+    }
+
+    private Method findPreDestroyMethod(Class<?> clazz) {
+        for(Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(PreDestroy.class)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
 }

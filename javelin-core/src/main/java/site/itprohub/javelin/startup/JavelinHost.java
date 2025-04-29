@@ -24,6 +24,8 @@ public class JavelinHost {
     private static void loadModules() {
         NHttpModuleFactory.registerModule(OprLogModule.class);
 
+        NHttpModuleFactory.registerModule(ExceptionModule.class);
+
         NHttpModuleFactory.registerModule(AuthenticateModule.class);
         NHttpModuleFactory.registerModule(AuthorizeModule.class);
     }

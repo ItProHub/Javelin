@@ -11,13 +11,18 @@ public class RouteDefinition {
     public List<String> pathVaribleNames; // 如 ["id"]
     public Method action; // 处理方法
     public Object controller;
+    public Class<?> clazz;
 
-    public RouteDefinition(String httpMethod, String rawPath, Pattern pathPattern, List<String> pathVariableNames, Object controller, Method method) {
+    public RouteDefinition(String httpMethod, String rawPath, Pattern pathPattern, List<String> pathVariableNames, Class<?> clazz, Method method) {
         this.httpMethod = httpMethod;
         this.rawPath = rawPath;
         this.pathPattern = pathPattern;
         this.pathVaribleNames = pathVariableNames;
-        this.controller = controller;
+        this.clazz = clazz;
         this.action = method;
+    }
+
+    public void setController(Object controller) {
+        this.controller = controller;
     }
 }

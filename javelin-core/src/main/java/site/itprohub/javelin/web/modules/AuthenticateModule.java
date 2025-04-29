@@ -4,7 +4,6 @@ import java.io.OutputStream;
 
 import com.sun.net.httpserver.HttpExchange;
 
-import site.itprohub.javelin.annotations.AllowAnonymous;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 import site.itprohub.javelin.http.Pipeline.NHttpModule;
 import site.itprohub.javelin.rest.RouteDefinition;

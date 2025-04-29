@@ -54,4 +54,7 @@ public class HttpPipelineContext {
         throw new AbortRequestException();
     }
 
+    public void dispose(){
+        this.httpContext = null;
+    }
 }

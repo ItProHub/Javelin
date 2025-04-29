@@ -42,7 +42,9 @@ public class ActionExecutor {
         } catch ( AbortRequestException e) {
             // 提前结束请求，啥也不干了
         } catch (Exception e) {
-            context.pipelineContext.setException(e);
+            // 获取原始异常
+            Throwable cause = e.getCause();
+            context.pipelineContext.setException((Exception)cause);
             app.onError(context);
         } finally {
             app.endRequest(context);
@@ -75,41 +77,38 @@ public class ActionExecutor {
             return;
         }
 
-        try {
-            Matcher matcher = route.pathPattern.matcher(exchange.getRequestURI().getPath());
-            // 解析路径参数并填充到参数列表中
-            Map<String, String> pathParams = new HashMap<>();
-            for (String name : route.pathVaribleNames) {
-                pathParams.put(name, matcher.group(name));
-            }
-
-            // 获取方法参数
-            Object[] args = resolveMethodParameters(exchange, route, pathParams);
-            // 调用方法并获取返回值
-            Object result = route.action.invoke(route.controller, args);
-
-            // 获取返回值的类型
-            Class<?> returnType = route.action.getReturnType();
-
-            String responseBody;
-            if(returnType == String.class || returnType == void.class || returnType == int.class) {
-                responseBody = (String) result;
-                exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-            } else {
-                responseBody = gson.toJson(result);
-                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-            }
-
-            byte[] response = responseBody.getBytes(StandardCharsets.UTF_8);
-
-            exchange.sendResponseHeaders(200, response.length);
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            exchange.sendResponseHeaders(500, 0);
+        
+        Matcher matcher = route.pathPattern.matcher(exchange.getRequestURI().getPath());
+        // 解析路径参数并填充到参数列表中
+        Map<String, String> pathParams = new HashMap<>();
+        for (String name : route.pathVaribleNames) {
+            pathParams.put(name, matcher.group(name));
         }
+
+        // 获取方法参数
+        Object[] args = resolveMethodParameters(exchange, route, pathParams);
+        // 调用方法并获取返回值
+        Object result = route.action.invoke(route.controller, args);
+
+        // 获取返回值的类型
+        Class<?> returnType = route.action.getReturnType();
+
+        String responseBody;
+        if(returnType == String.class || returnType == void.class || returnType == int.class) {
+            responseBody = (String) result;
+            exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        } else {
+            responseBody = gson.toJson(result);
+            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        }
+
+        byte[] response = responseBody.getBytes(StandardCharsets.UTF_8);
+
+        exchange.sendResponseHeaders(200, response.length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(response);
+        }
+        
     }
 
 

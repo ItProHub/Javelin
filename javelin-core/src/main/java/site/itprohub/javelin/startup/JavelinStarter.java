@@ -18,7 +18,6 @@ import site.itprohub.javelin.rest.Router;
 public class JavelinStarter {
 
     private static final Router ROUTER;
-    private static final JavelinContext CONTEXT;
 
     public static String BASE_PACKAGE;
 
@@ -26,13 +25,12 @@ public class JavelinStarter {
 
     static { // 静态初始化块，在类加载时执行
         ROUTER = new Router(); // 创建Router实例
-        CONTEXT = new JavelinContext(); // 创建JavelinContext实例        
     }
 
     public void run(Class<?> appClass, String[] args, AppStartupOption option) throws Exception
     {
         BASE_PACKAGE = appClass.getPackage().getName(); // 自动获取包名
-        System.out.println("🚀 Javelin starting from package: " + BASE_PACKAGE);
+        System.out.println("Javelin starting from package: " + BASE_PACKAGE);
 
         javelinInit();
 
@@ -45,7 +43,7 @@ public class JavelinStarter {
 
         server.start();
 
-        System.out.println("✅ Javelin initialized!");
+        System.out.println(" Javelin initialized!");
     }
 
     private void javelinInit()
@@ -97,7 +95,7 @@ public class JavelinStarter {
     private static HttpServer createServer() throws IOException { // ✅ 创建HttpServer实例
         // 获取端口号
         int port = LocalSettings.getInt(Const.Names.JAVELIN_PORT, 8080);
-        System.out.println("🌐 HTTP Server started at http://localhost:" + port);
+        System.out.println(" HTTP Server started at http://localhost:" + port);
 
         return HttpServer.create(new InetSocketAddress(port), 0);
     }
@@ -106,7 +104,7 @@ public class JavelinStarter {
     private void configRouter(HttpServer server) {
         Reflections reflections = new Reflections(BASE_PACKAGE);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(RestController.class);
-        ROUTER.registerRoutes(server, controllers, CONTEXT); // 注册路由
+        ROUTER.registerRoutes(server, controllers); // 注册路由
     }
 
     private void loadStarters() {

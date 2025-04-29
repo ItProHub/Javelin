@@ -70,7 +70,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\javelin-demo.jar;%APP_HOME%\lib\javelin-core-1.0.0.jar;%APP_HOME%\lib\reflections-0.10.2.jar;%APP_HOME%\lib\gson-2.10.1.jar;%APP_HOME%\lib\javassist-3.28.0-GA.jar;%APP_HOME%\lib\jsr305-3.0.2.jar;%APP_HOME%\lib\slf4j-api-1.7.32.jar
+set CLASSPATH=%APP_HOME%\lib\javelin-demo.jar;%APP_HOME%\lib\javelin-core-1.0.0.jar;%APP_HOME%\lib\reflections-0.10.2.jar;%APP_HOME%\lib\slf4j-api-1.7.32.jar;%APP_HOME%\lib\gson-2.10.1.jar;%APP_HOME%\lib\javassist-3.28.0-GA.jar;%APP_HOME%\lib\jsr305-3.0.2.jar
 
 
 @rem Execute javelin-demo

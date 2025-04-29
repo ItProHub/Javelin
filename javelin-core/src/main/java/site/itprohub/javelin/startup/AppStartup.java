@@ -9,7 +9,7 @@ public class AppStartup {
 
     static  AppStartupOption STARTUP_OPTION;
 
-    public static void run(Class<?> appClass, String[] args) { // ✅ 重载run方法，支持AppStartupOption参数
+    public static void run(Class<?> appClass, String[] args) { // 重载run方法，支持AppStartupOption参数
         run(appClass, args, null); // 调用重载方法，传入null作为默认值
     }
 
