@@ -3,6 +3,8 @@ package site.itprohub.javelin.rest;
 import site.itprohub.javelin.annotations.*;
 import site.itprohub.javelin.context.JavelinContext;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
+import site.itprohub.javelin.startup.AppStartup;
+import site.itprohub.javelin.utils.EnvUtils;
 import site.itprohub.javelin.utils.UrlExtensions;
 
 import java.lang.reflect.Method;
@@ -12,7 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.net.httpserver.HttpServer;
+import org.reflections.Reflections;
 import java.lang.annotation.*;
 
 public class Router {
@@ -32,9 +34,12 @@ public class Router {
      * @param classes 包含控制器类的集合
      * @param context JavelinContext 实例
      **/
-    public void registerRoutes(HttpServer server, Set<Class<?>> classes) {
+    public void registerRoutes() {
 
-        for (Class<?> clazz : classes) {
+        Reflections reflections = new Reflections(EnvUtils.ApplicationName);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(RestController.class);
+
+        for (Class<?> clazz : controllers) {
             if (!clazz.isAnnotationPresent(RestController.class))
                 continue;
 
@@ -61,45 +66,15 @@ public class Router {
             }
         }
 
-        registerHandler(server);
-
-    }
-
-
-    /**
-     * 注册路由处理程序
-     * @param server HttpServer 实例* 
-     **/
-    private void registerHandler(HttpServer server) {
-        // 动态路由处理程序
-        server.createContext("/", exchange -> {
-            String requestPath = exchange.getRequestURI().getPath();
-            RouteDefinition matchedRoute = findMatchRoute(requestPath);
-
-            if (matchedRoute == null) {
-                // 匹配不到404
-                exchange.sendResponseHeaders(404, -1);
-                return;
-            }
-
-            // 延迟实例化controller
-            Object controllerInstance = JAVELIN_CONTEXT.getBean(matchedRoute.clazz);
-            matchedRoute.setController(controllerInstance);
-
-            NHttpContext httpContext = new NHttpContext(exchange, matchedRoute);
-            try {
-                ActionExecutor.INSTANCE.execute(httpContext);
+        if(AppStartup.STARTUP_OPTION.showHomePage) {
+            try{
+                dynamicRoutes.add(new RouteDefinition("GET", "/", Pattern.compile("/"), List.of(), DefaultRootHandler.class, DefaultRootHandler.class.getDeclaredMethod("handle", NHttpContext.class)));
             } catch (Exception e) {
-                httpContext.lastException = e;
-            } finally {
-                // 释放资源
-                httpContext.pipelineContext.dispose();
-
-                JAVELIN_CONTEXT.callPreDestroy(controllerInstance);
+               throw new RuntimeException(e); 
             }
-            
-        });
+        }
     }
+
 
     private RouteDefinition findMatchRoute(String requestPath) {
         return dynamicRoutes.stream()
@@ -111,6 +86,41 @@ public class Router {
     private boolean matchRoute(String requestPath, RouteDefinition route) {
        Matcher matcher = route.pathPattern.matcher(requestPath);
        return matcher.matches();
+    }
+
+
+    public void handle(NHttpContext httpContext) throws Exception {
+        String requestPath = httpContext.getPath();
+
+        RouteDefinition matchedRoute = findMatchRoute(requestPath);
+
+        if (matchedRoute == null) {
+            // 匹配不到404
+            httpContext.response.setStatus(404);
+            httpContext.response.getWriter().write("page not found");
+            return;
+        }
+
+        // if(matchedRoute.controller == null) {
+        //     matchedRoute.action.invoke(null, new Object[]{httpContext});
+        //     return;
+        // }
+
+        // 延迟实例化controller
+        Object controllerInstance = JAVELIN_CONTEXT.getBean(matchedRoute.clazz);
+        matchedRoute.setController(controllerInstance);
+
+        httpContext.setRouteDefinition(matchedRoute);
+        try {
+            ActionExecutor.INSTANCE.execute(httpContext);
+        } catch (Exception e) {
+            httpContext.lastException = e;
+        } finally {
+            // 释放资源
+            httpContext.pipelineContext.dispose();
+
+            JAVELIN_CONTEXT.callPreDestroy(controllerInstance);
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 package site.itprohub.javelin.rest;
 
-import java.io.OutputStream;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import com.google.gson.Gson;
-import com.sun.net.httpserver.HttpExchange;
-
+import jakarta.servlet.http.HttpServletResponse;
 import site.itprohub.javelin.annotations.AllowAnonymous;
 import site.itprohub.javelin.annotations.parameter.FromBody;
 import site.itprohub.javelin.annotations.parameter.FromQuery;
@@ -18,7 +17,6 @@ import site.itprohub.javelin.http.Pipeline.AbortRequestException;
 import site.itprohub.javelin.http.Pipeline.NHttpApplication;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 import site.itprohub.javelin.utils.StringExtensions;
-import site.itprohub.javelin.utils.UrlExtensions;
 
 public class ActionExecutor {
     public static final ActionExecutor INSTANCE = new ActionExecutor();
@@ -54,6 +52,10 @@ public class ActionExecutor {
 
     private void preHandle(NHttpContext context) throws Exception {
         RouteDefinition routeDefinition = context.pipelineContext.routeDefinition;
+
+        if (context.request.getRequestURI().equals("/")) {
+            context.skipAuthentication = true;
+        }
         // 反射获取所请求方法所在Controller和action的注解信息
         // 如果Controller类上有AllowAnonymous注解，则不需要验证token
         if (routeDefinition.controller.getClass().isAnnotationPresent(AllowAnonymous.class)) { 
@@ -68,17 +70,16 @@ public class ActionExecutor {
 
 
     private void handlerRequest(NHttpContext context) throws Exception {
-        HttpExchange exchange = context.exchange;
         RouteDefinition route = context.pipelineContext.routeDefinition;
+        HttpServletResponse response = context.response;
 
         // 校验请求方法的合法性
-        if (!route.httpMethod.equalsIgnoreCase(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(405, -1);
+        if (!route.httpMethod.equalsIgnoreCase(context.getMethod())) {
+            response.setStatus(405);
             return;
         }
-
         
-        Matcher matcher = route.pathPattern.matcher(exchange.getRequestURI().getPath());
+        Matcher matcher = route.pathPattern.matcher(context.getPath());
         // 解析路径参数并填充到参数列表中
         Map<String, String> pathParams = new HashMap<>();
         for (String name : route.pathVaribleNames) {
@@ -86,7 +87,7 @@ public class ActionExecutor {
         }
 
         // 获取方法参数
-        Object[] args = resolveMethodParameters(exchange, route, pathParams);
+        Object[] args = resolveMethodParameters(context, route, pathParams);
         // 调用方法并获取返回值
         Object result = route.action.invoke(route.controller, args);
 
@@ -96,18 +97,18 @@ public class ActionExecutor {
         String responseBody;
         if(returnType == String.class || returnType == void.class || returnType == int.class) {
             responseBody = (String) result;
-            exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+            context.response.addHeader("Content-Type", "text/plain; charset=UTF-8");
         } else {
             responseBody = gson.toJson(result);
-            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+            context.response.addHeader("Content-Type", "application/json; charset=UTF-8");
         }
 
-        byte[] response = responseBody.getBytes(StandardCharsets.UTF_8);
+        byte[] responseBytes = responseBody.getBytes(StandardCharsets.UTF_8);
 
-        exchange.sendResponseHeaders(200, response.length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(response);
-        }
+        response.setStatus(200);
+        response.setContentLength(responseBytes.length);
+        response.getWriter().write(responseBody);
+        response.getWriter().flush();
         
     }
 
@@ -120,7 +121,7 @@ public class ActionExecutor {
      * @return 参数数组
      * @throws Exception 异常
      **/
-    private Object[] resolveMethodParameters(HttpExchange exchange, RouteDefinition route, Map<String, String> pathVariables) throws Exception {
+    private Object[] resolveMethodParameters(NHttpContext context, RouteDefinition route, Map<String, String> pathVariables) throws Exception {
         Parameter[] parameters = route.action.getParameters();
 
         // 读取请求体内容
@@ -132,14 +133,15 @@ public class ActionExecutor {
 
             if (parameter.isAnnotationPresent(FromQuery.class)) {
                 // 解析 URL 中的参数
-                Map<String, String> queryMap = UrlExtensions.parseQueryParams(exchange.getRequestURI().getRawQuery());
+                Map<String, String[]> queryMap = context.request.getParameterMap();
+                // Map<String, String> queryMap = UrlExtensions.parseQueryParams(context.request.getRequestURI().getRawQuery());
 
                 String key = parameter.getName();
-                String value = queryMap.get(key);
+                String value = queryMap.get(key)[0];
                 args[i] = StringExtensions.convertTo(value, parameter.getType());
             } else if (parameter.isAnnotationPresent(FromBody.class)) {
                 if (bodyString == null) {
-                    bodyString = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                    bodyString = new String(context.request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
                 }
                 // 从请求体中读取数据并转换为对象
                 // 这里需要根据实际情况实现从请求体中读取数据的逻辑
@@ -151,6 +153,10 @@ public class ActionExecutor {
                 String value = pathVariables.get(name);
                 args[i] = StringExtensions.convertTo(value, parameter.getType());
             } else {
+                if (parameter.getType() == NHttpContext.class) {
+                    args[i] = context; // 直接传递 context 对象
+                    continue; // 跳过其他参数的处理
+                }
                 args[i] = null; // 暂不支持其他来源
             }
         }

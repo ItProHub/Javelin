@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfRequestTest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <RequestTest Category="hello" Title="query">
+        <Request><![CDATA[GET {javelin-url}/query?name=test HTTP/1.1
+Content-Type: application/json
+Connection: keep-alive
+
+]]></Request>
+        <Response StatusCode="200">
+            <Headers />
+            <Body />
+        </Response>
+        <AfterScript><![CDATA[
+]]></AfterScript>
+    </RequestTest>
+
+    <RequestTest Category="hello" Title="get/id">
+        <Request><![CDATA[GET {javelin-url}/get/1 HTTP/1.1
+Content-Type: application/json
+Connection: keep-alive
+
+]]></Request>
+        <Response StatusCode="200">
+            <Headers />
+            <Body />
+        </Response>
+        <AfterScript><![CDATA[
+]]></AfterScript>
+    </RequestTest>
+
+    <RequestTest Category="hello" Title="post">
+        <Request><![CDATA[POST {javelin-url}/query?name=test HTTP/1.1
+Content-Type: application/json
+Connection: keep-alive
+
+{
+    "username": "test",
+    "age": 18
+}
+]]></Request>
+        <Response StatusCode="200">
+            <Headers />
+            <Body />
+        </Response>
+        <AfterScript><![CDATA[
+]]></AfterScript>
+    </RequestTest>
+
+    <RequestTest Category="hello" Title="error">
+        <Request><![CDATA[GET {javelin-url}/error HTTP/1.1
+Content-Type: application/json
+Connection: keep-alive
+
+]]></Request>
+        <Response StatusCode="500">
+            <Headers />
+            <Body />
+        </Response>
+        <AfterScript><![CDATA[
+]]></AfterScript>
+    </RequestTest>
+    
+    
+</ArrayOfRequestTest>

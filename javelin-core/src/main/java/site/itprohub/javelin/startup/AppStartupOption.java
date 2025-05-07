@@ -7,6 +7,8 @@ public class AppStartupOption {
 
     public boolean enableConfigService = false; // 是否启用配置服务，默认不启用
 
+    public boolean showHomePage = true;
+
     public static AppStartupOption create(AppStartupOption option) throws Exception { // ✅ 初始化AppStartupOption参数
         AppStartupOption appStartupOption = option == null ? new AppStartupOption() : (AppStartupOption) option.clone();;
         

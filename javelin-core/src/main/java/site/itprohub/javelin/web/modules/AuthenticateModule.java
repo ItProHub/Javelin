@@ -27,18 +27,13 @@ public class AuthenticateModule extends NHttpModule {
             return;
         }
 
-        HttpExchange exchange = httpContext.exchange;
-        String authorizationHeader = exchange.getRequestHeaders().getFirst("Authorization");
+        String authorizationHeader = httpContext.request.getHeader("Authorization");
 
         if(authorizationHeader == null || !authorizationHeader.equals("Bearer valid_token")){
-            exchange.getResponseHeaders().set("X-Response-ErrorCode", "NotLogin");
-            exchange.sendResponseHeaders(401, 0); // 未登录，返回401状态码
-            try (OutputStream os = exchange.getResponseBody()){
-                os.write("Please login.".getBytes());
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage()); // 打印错误信息
-            }
-            exchange.getResponseBody().close();
+            httpContext.response.setHeader("X-Response-ErrorCode", "NotLogin");
+            httpContext.response.setStatus(401); // 未登录，返回401状态码
+            httpContext.response.getWriter().write("Please login."); // 未登录，返回错误信息
+            httpContext.response.getWriter().close(); // 关闭输出流
 
             httpContext.pipelineContext.completeRequest();
             return;

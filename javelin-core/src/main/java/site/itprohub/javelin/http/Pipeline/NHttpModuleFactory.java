@@ -18,7 +18,7 @@ public class NHttpModuleFactory {
         }
 
         try {
-            if(module.getDeclaredConstructor(null) == null)  {
+            if(module.getDeclaredConstructor() == null)  {
                 throw new IllegalArgumentException("将要注册的插件 "+ module.getName() +" 没有公开无参的构造方法。");
             }
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class NHttpModuleFactory {
 
        for (Class<?> moduleClass : MODULE_LIST) {
         	try {
-            	NHttpModule plugin = (NHttpModule) moduleClass.getDeclaredConstructor(null).newInstance(null);
+            	NHttpModule plugin = (NHttpModule) moduleClass.getDeclaredConstructor().newInstance();
 				list.add(plugin);
         	} catch (Exception e) {
         		throw new RuntimeException("创建插件实例时发生错误: " + moduleClass.getName(), e); 

@@ -46,7 +46,7 @@ public class OprLogModule extends NHttpModule {
 
         log.httpMethod = routeDefinition.httpMethod;
         log.url = routeDefinition.rawPath;
-        log.UserAgent = httpContext.exchange.getRequestHeaders().getFirst("User-Agent");
+        log.UserAgent = httpContext.request.getHeader("User-Agent");
         
         scope.saveOprLog(httpContext.pipelineContext);
     }

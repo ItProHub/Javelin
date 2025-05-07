@@ -1,49 +1,38 @@
 package site.itprohub.javelin.startup;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.reflections.Reflections;
 
-import com.sun.net.httpserver.HttpServer;
-
-import site.itprohub.javelin.annotations.RestController;
-import site.itprohub.javelin.base.config.LocalSettings;
-import site.itprohub.javelin.common.Const;
-import site.itprohub.javelin.context.JavelinContext;
-import site.itprohub.javelin.rest.Router;
+import site.itprohub.javelin.http.tomcat.JavelinEmbeddedTomcatServer;
+import site.itprohub.javelin.utils.EnvUtils;
 
 public class JavelinStarter {
 
-    private static final Router ROUTER;
-
-    public static String BASE_PACKAGE;
-
     private Set<BaseAppStarter> starters = new HashSet<>();
 
-    static { // 静态初始化块，在类加载时执行
-        ROUTER = new Router(); // 创建Router实例
+    static {
+        // 静态初始化块，在类加载时执行
     }
 
     public void run(Class<?> appClass, String[] args, AppStartupOption option) throws Exception
     {
-        BASE_PACKAGE = appClass.getPackage().getName(); // 自动获取包名
-        System.out.println("Javelin starting from package: " + BASE_PACKAGE);
+        EnvUtils.init(appClass); // 自动设置应用名
+        System.out.println("Javelin starting from package: " + EnvUtils.ApplicationName); // 打印应用名
 
         javelinInit();
 
-        HttpServer server = createServer();
-        configRouter(server);
+        JavelinEmbeddedTomcatServer server = new JavelinEmbeddedTomcatServer(); // 创建Tomcat服务器实例
 
         JavelinHost.initNHttpApplication();
 
         applicationInit();
 
+        System.out.println(" Javelin initialized!");
+
         server.start();
 
-        System.out.println(" Javelin initialized!");
     }
 
     private void javelinInit()
@@ -81,7 +70,6 @@ public class JavelinStarter {
 
         JavelinInitializer.applicationInit();
 
-
         for (BaseAppStarter starter : starters) {
             try {
                 starter.postApplicationInit(); // 调用preInit方法
@@ -92,23 +80,8 @@ public class JavelinStarter {
     }
 
 
-    private static HttpServer createServer() throws IOException { // ✅ 创建HttpServer实例
-        // 获取端口号
-        int port = LocalSettings.getInt(Const.Names.JAVELIN_PORT, 8080);
-        System.out.println(" HTTP Server started at http://localhost:" + port);
-
-        return HttpServer.create(new InetSocketAddress(port), 0);
-    }
-
-    // ✅ 配置路由
-    private void configRouter(HttpServer server) {
-        Reflections reflections = new Reflections(BASE_PACKAGE);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(RestController.class);
-        ROUTER.registerRoutes(server, controllers); // 注册路由
-    }
-
     private void loadStarters() {
-        Reflections reflections = new Reflections(BASE_PACKAGE);
+        Reflections reflections = new Reflections(EnvUtils.ApplicationName);
         Set<Class<? extends BaseAppStarter>> starterClasses = reflections.getSubTypesOf(BaseAppStarter.class);
 
         for (Class<? extends BaseAppStarter> starterClass : starterClasses) {

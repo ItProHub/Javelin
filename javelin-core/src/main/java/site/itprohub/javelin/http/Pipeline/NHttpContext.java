@@ -2,13 +2,13 @@ package site.itprohub.javelin.http.Pipeline;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import site.itprohub.javelin.log.OprLogScope;
 import site.itprohub.javelin.rest.RouteDefinition;
 
-public class NHttpContext {
-    public HttpExchange exchange;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public abstract class NHttpContext {
 
     public HttpPipelineContext pipelineContext;
 
@@ -18,10 +18,16 @@ public class NHttpContext {
 
     public boolean skipAuthentication;
 
-    public NHttpContext(HttpExchange exchange, RouteDefinition routeDefinition) {
-        this.exchange = exchange;
+    public HttpServletRequest request;
+
+    public HttpServletResponse response;
+
+    public NHttpContext() {
         this.pipelineContext = HttpPipelineContext.start(this);
-        this.pipelineContext.routeDefinition = routeDefinition;
+    }
+
+    public void setRouteDefinition(RouteDefinition routeDefinition) {
+        this.pipelineContext.routeDefinition = routeDefinition; 
     }
 
     void setOprLogScope(OprLogScope oprLogScope) {
@@ -30,12 +36,15 @@ public class NHttpContext {
 
     public void httpReply(int statusCode, String message) {
         try {
-            this.exchange.sendResponseHeaders(statusCode, 0);
-            this.exchange.getResponseBody().write(message.getBytes());
-            this.exchange.close(); 
+            this.response.setStatus(statusCode);
+            this.response.getWriter().write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }    
+    }
+
+    public abstract String getPath();
+
+    public abstract String getMethod();
 
 }
