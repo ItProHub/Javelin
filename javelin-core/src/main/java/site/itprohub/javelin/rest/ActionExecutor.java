@@ -80,6 +80,9 @@ public class ActionExecutor {
         }
         
         Matcher matcher = route.pathPattern.matcher(context.getPath());
+        if (!matcher.matches()) {
+            throw new RuntimeException("路径未匹配成功：" + context.getPath());
+        }
         // 解析路径参数并填充到参数列表中
         Map<String, String> pathParams = new HashMap<>();
         for (String name : route.pathVaribleNames) {

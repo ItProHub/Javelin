@@ -28,6 +28,7 @@ public class HelloController {
     }
 
     @GetMapping("/get/{id}")
+    @AllowAnonymous
     public String get(@FromRoute int id) {
         return " This is a GET request. " + userService.getUserById(id);
     }

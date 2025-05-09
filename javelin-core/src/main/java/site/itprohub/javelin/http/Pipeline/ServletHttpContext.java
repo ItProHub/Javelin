@@ -21,6 +21,6 @@ public class ServletHttpContext extends NHttpContext {
     }
 
     public String getPath() { 
-        return request.getRequestURI(); 
+        return request.getRequestURI();
     }
 }

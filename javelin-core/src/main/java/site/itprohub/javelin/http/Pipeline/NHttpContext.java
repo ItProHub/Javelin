@@ -36,6 +36,8 @@ public abstract class NHttpContext {
 
     public void httpReply(int statusCode, String message) {
         try {
+            this.response.setContentType("text/plain; chatset=UTF-8");
+            this.response.setCharacterEncoding("UTF-8");
             this.response.setStatus(statusCode);
             this.response.getWriter().write(message);
         } catch (IOException e) {
