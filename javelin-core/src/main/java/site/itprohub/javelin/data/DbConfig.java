@@ -25,11 +25,6 @@ public class DbConfig {
 
 
     public DbContext creaDbContext() {
-        try {
-            Connection conn = DriverManager.getConnection(this.toString());
-            return new DbContext(conn); 
-        } catch (Exception e) {
-            throw new RuntimeException("创建数据库连接失败：" + this.dbName, e); 
-        }
+        return new DbContext(this.toString()); 
     }
 }

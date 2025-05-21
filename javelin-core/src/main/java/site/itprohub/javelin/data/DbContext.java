@@ -4,14 +4,31 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import site.itprohub.javelin.data.command.CPQueryFactory;
+import site.itprohub.javelin.data.entity.EntityFactory;
 
 public class DbContext implements AutoCloseable {
-    private final Connection conn;
+    private String connUrl;
+
+    private Connection conn;
 
     private CPQueryFactory queryFactory;
 
-    public DbContext(Connection conn) {
-        this.conn = conn;
+    private EntityFactory entityFactory;
+
+    public DbContext(String connUrl) {
+        this.connUrl = connUrl;
+    }
+
+    public void openConnection() throws SQLException {
+        if ( conn != null && conn.isClosed() == false ) {
+            return;
+        }
+
+        try {
+            conn = DriverManager.getConnection(connUrl);
+        } catch (SQLException e) {
+            throw new SQLException("Failed to open connection", e);
+        }
     }
 
     public CPQueryFactory CPQuery() {
@@ -22,13 +39,20 @@ public class DbContext implements AutoCloseable {
         return queryFactory;
     }
 
+    public EntityFactory Entity() {
+        if (entityFactory == null) {
+            entityFactory = new EntityFactory(this);
+       
+        }
+        return entityFactory;
+    }
+
     public Connection getConnection() {
         return conn; 
     }
 
     public static DbContext create(String connStr) throws SQLException {
-        Connection conn = DriverManager.getConnection(connStr);
-        return new DbContext(conn);
+        return new DbContext(connStr);
     }
 
     // public CPQuery creatQuery(String sql) {

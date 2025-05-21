@@ -12,5 +12,11 @@ public class EmployeeService {
            CPQuery query = db.CPQuery().create("SELECT * FROM employees WHERE id = ?", new Object[]{id});
            return query.toSingle(Employee.class); 
         }
-   }
+    }
+
+   public Employee getEmployeeEntity(int id) throws Exception {
+        try(DbContext db = DbConnManager.createAppDb("test")) {
+            return db.Entity().create(Employee.class).findById(id);
+        }
+    }
 }
