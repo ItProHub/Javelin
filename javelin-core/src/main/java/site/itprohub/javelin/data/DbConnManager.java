@@ -2,7 +2,11 @@ package site.itprohub.javelin.data;
 
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
+import site.itprohub.javelin.data.config.DbConfig;
 import site.itprohub.javelin.data.config.DbConfigProvider;
+import site.itprohub.javelin.data.datasource.DataSourceRegistry;
 
 public class DbConnManager {
 
@@ -20,9 +24,12 @@ public class DbConnManager {
     }
 
     public static DbContext createAppDb(String dbName) throws SQLException {
+
         DbConfig dbConfig = getAppDbConfig(dbName);
 
-        return dbConfig.creaDbContext();
+        DataSource dataSource = DataSourceRegistry.getDataSource(dbName, dbConfig);
+
+        return new DbContext(dataSource);
     }
 
 }

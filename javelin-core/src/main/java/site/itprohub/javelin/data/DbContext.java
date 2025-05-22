@@ -3,11 +3,14 @@ package site.itprohub.javelin.data;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import site.itprohub.javelin.data.command.CPQueryFactory;
 import site.itprohub.javelin.data.entity.EntityFactory;
 
 public class DbContext implements AutoCloseable {
-    private String connUrl;
+    private DataSource dataSource;
 
     private Connection conn;
 
@@ -15,8 +18,8 @@ public class DbContext implements AutoCloseable {
 
     private EntityFactory entityFactory;
 
-    public DbContext(String connUrl) {
-        this.connUrl = connUrl;
+    public DbContext(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void openConnection() throws SQLException {
@@ -25,7 +28,7 @@ public class DbContext implements AutoCloseable {
         }
 
         try {
-            conn = DriverManager.getConnection(connUrl);
+            conn = dataSource.getConnection();
         } catch (SQLException e) {
             throw new SQLException("Failed to open connection", e);
         }
@@ -51,8 +54,8 @@ public class DbContext implements AutoCloseable {
         return conn; 
     }
 
-    public static DbContext create(String connStr) throws SQLException {
-        return new DbContext(connStr);
+    public static DbContext create(DataSource dataSource) throws SQLException {
+        return new DbContext(dataSource);
     }
 
     // public CPQuery creatQuery(String sql) {

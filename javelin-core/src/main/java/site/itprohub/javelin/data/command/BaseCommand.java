@@ -99,7 +99,7 @@ public abstract class BaseCommand {
                 setParams(ps);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                return BeanPropertyRowMapper.mapRow(rs, clazz); 
+                    return BeanPropertyRowMapper.mapRow(rs, clazz); 
                 }
                 return null;
             } catch(Exception e) {
