@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ActionExecutor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.rest</a> &gt; <span class="el_source">ActionExecutor.java</span></div><h1>ActionExecutor.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.rest;
+
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+
+import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletResponse;
+import site.itprohub.javelin.annotations.AllowAnonymous;
+import site.itprohub.javelin.annotations.parameter.FromBody;
+import site.itprohub.javelin.annotations.parameter.FromQuery;
+import site.itprohub.javelin.annotations.parameter.FromRoute;
+import site.itprohub.javelin.http.Pipeline.AbortRequestException;
+import site.itprohub.javelin.http.Pipeline.NHttpApplication;
+import site.itprohub.javelin.http.Pipeline.NHttpContext;
+import site.itprohub.javelin.utils.StringExtensions;
+
+<span class="nc" id="L21">public class ActionExecutor {</span>
+<span class="nc" id="L22">    public static final ActionExecutor INSTANCE = new ActionExecutor();</span>
+
+<span class="nc" id="L24">    private final Gson gson = new Gson();</span>
+
+    public void execute(NHttpContext context) throws Exception {
+<span class="nc" id="L27">        NHttpApplication app = NHttpApplication.INSTANCE;</span>
+
+<span class="nc" id="L29">        preHandle(context);</span>
+        try{
+<span class="nc" id="L31">            app.beginRequest(context);</span>
+
+<span class="nc" id="L33">            app.authenticateRequest(context);</span>
+
+<span class="nc" id="L35">            app.postAuthenticateRequest(context);</span>
+
+<span class="nc" id="L37">            app.resolveRequestCache(context);</span>
+
+<span class="nc" id="L39">            handlerRequest(context);</span>
+<span class="nc" id="L40">        } catch ( AbortRequestException e) {</span>
+            // 提前结束请求，啥也不干了
+<span class="nc" id="L42">        } catch (Exception e) {</span>
+            // 获取原始异常
+<span class="nc" id="L44">            Throwable cause = e.getCause();</span>
+<span class="nc" id="L45">            context.pipelineContext.setException((Exception)cause);</span>
+<span class="nc" id="L46">            app.onError(context);</span>
+        } finally {
+<span class="nc" id="L48">            app.endRequest(context);</span>
+        }
+
+<span class="nc" id="L51">    }</span>
+
+    private void preHandle(NHttpContext context) throws Exception {
+<span class="nc" id="L54">        RouteDefinition routeDefinition = context.pipelineContext.routeDefinition;</span>
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (context.request.getRequestURI().equals(&quot;/&quot;)) {</span>
+<span class="nc" id="L57">            context.skipAuthentication = true;</span>
+        }
+        // 反射获取所请求方法所在Controller和action的注解信息
+        // 如果Controller类上有AllowAnonymous注解，则不需要验证token
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (routeDefinition.controller.getClass().isAnnotationPresent(AllowAnonymous.class)) { </span>
+<span class="nc" id="L62">            context.skipAuthentication = true;</span>
+        }
+
+         // 检查方法上是否有 @AllowAnonymous 注解
+<span class="nc bnc" id="L66" title="All 2 branches missed.">         if (routeDefinition.action.isAnnotationPresent(AllowAnonymous.class)) {</span>
+<span class="nc" id="L67">            context.skipAuthentication = true;</span>
+        }
+<span class="nc" id="L69">    }</span>
+
+
+    private void handlerRequest(NHttpContext context) throws Exception {
+<span class="nc" id="L73">        RouteDefinition route = context.pipelineContext.routeDefinition;</span>
+<span class="nc" id="L74">        HttpServletResponse response = context.response;</span>
+
+        // 校验请求方法的合法性
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (!route.httpMethod.equalsIgnoreCase(context.getMethod())) {</span>
+<span class="nc" id="L78">            response.setStatus(405);</span>
+<span class="nc" id="L79">            return;</span>
+        }
+        
+<span class="nc" id="L82">        Matcher matcher = route.pathPattern.matcher(context.getPath());</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (!matcher.matches()) {</span>
+<span class="nc" id="L84">            throw new RuntimeException(&quot;路径未匹配成功：&quot; + context.getPath());</span>
+        }
+        // 解析路径参数并填充到参数列表中
+<span class="nc" id="L87">        Map&lt;String, String&gt; pathParams = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        for (String name : route.pathVaribleNames) {</span>
+<span class="nc" id="L89">            pathParams.put(name, matcher.group(name));</span>
+<span class="nc" id="L90">        }</span>
+
+        // 获取方法参数
+<span class="nc" id="L93">        Object[] args = resolveMethodParameters(context, route, pathParams);</span>
+        // 调用方法并获取返回值
+<span class="nc" id="L95">        Object result = route.action.invoke(route.controller, args);</span>
+
+        // 获取返回值的类型
+<span class="nc" id="L98">        Class&lt;?&gt; returnType = route.action.getReturnType();</span>
+
+        String responseBody;
+<span class="nc bnc" id="L101" title="All 6 branches missed.">        if(returnType == String.class || returnType == void.class || returnType == int.class) {</span>
+<span class="nc" id="L102">            responseBody = (String) result;</span>
+<span class="nc" id="L103">            context.response.addHeader(&quot;Content-Type&quot;, &quot;text/plain; charset=UTF-8&quot;);</span>
+        } else {
+<span class="nc" id="L105">            responseBody = gson.toJson(result);</span>
+<span class="nc" id="L106">            context.response.addHeader(&quot;Content-Type&quot;, &quot;application/json; charset=UTF-8&quot;);</span>
+        }
+
+<span class="nc" id="L109">        byte[] responseBytes = responseBody.getBytes(StandardCharsets.UTF_8);</span>
+
+<span class="nc" id="L111">        response.setStatus(200);</span>
+<span class="nc" id="L112">        response.setContentLength(responseBytes.length);</span>
+<span class="nc" id="L113">        response.getWriter().write(responseBody);</span>
+<span class="nc" id="L114">        response.getWriter().flush();</span>
+        
+<span class="nc" id="L116">    }</span>
+
+
+    /**
+     * 解析方法参数
+     * 
+     * @param method   方法
+     * @param exchange HttpExchange 实例
+     * @return 参数数组
+     * @throws Exception 异常
+     **/
+    private Object[] resolveMethodParameters(NHttpContext context, RouteDefinition route, Map&lt;String, String&gt; pathVariables) throws Exception {
+<span class="nc" id="L128">        Parameter[] parameters = route.action.getParameters();</span>
+
+        // 读取请求体内容
+<span class="nc" id="L131">        String bodyString = null;</span>
+
+<span class="nc" id="L133">        Object[] args = new Object[parameters.length];</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (int i = 0; i &lt; parameters.length; i++) {</span>
+<span class="nc" id="L135">            Parameter parameter = parameters[i];</span>
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (parameter.isAnnotationPresent(FromQuery.class)) {</span>
+                // 解析 URL 中的参数
+<span class="nc" id="L139">                Map&lt;String, String[]&gt; queryMap = context.request.getParameterMap();</span>
+                // Map&lt;String, String&gt; queryMap = UrlExtensions.parseQueryParams(context.request.getRequestURI().getRawQuery());
+
+<span class="nc" id="L142">                String key = parameter.getName();</span>
+<span class="nc" id="L143">                String value = queryMap.get(key)[0];</span>
+<span class="nc" id="L144">                args[i] = StringExtensions.convertTo(value, parameter.getType());</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            } else if (parameter.isAnnotationPresent(FromBody.class)) {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                if (bodyString == null) {</span>
+<span class="nc" id="L147">                    bodyString = new String(context.request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);</span>
+                }
+                // 从请求体中读取数据并转换为对象
+                // 这里需要根据实际情况实现从请求体中读取数据的逻辑
+<span class="nc" id="L151">                args[i] = new Gson().fromJson(bodyString, parameter.getType());</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            } else if (parameter.isAnnotationPresent(FromRoute.class)) {</span>
+                // 获取参数名称
+<span class="nc" id="L154">                String name = parameter.getName();</span>
+                // 例如，从请求路径中提取参数值
+<span class="nc" id="L156">                String value = pathVariables.get(name);</span>
+<span class="nc" id="L157">                args[i] = StringExtensions.convertTo(value, parameter.getType());</span>
+<span class="nc" id="L158">            } else {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                if (parameter.getType() == NHttpContext.class) {</span>
+<span class="nc" id="L160">                    args[i] = context; // 直接传递 context 对象</span>
+<span class="nc" id="L161">                    continue; // 跳过其他参数的处理</span>
+                }
+<span class="nc" id="L163">                args[i] = null; // 暂不支持其他来源</span>
+            }
+        }
+
+<span class="nc" id="L167">        return args;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

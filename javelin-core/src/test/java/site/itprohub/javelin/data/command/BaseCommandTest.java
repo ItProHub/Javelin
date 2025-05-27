@@ -1,0 +1,40 @@
+package site.itprohub.javelin.data.command;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import site.itprohub.javelin.data.DbConnManager;
+import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.entity.Employee;
+
+public class BaseCommandTest {
+
+    private DbContext dbContext;
+    private BaseCommand baseCommand;
+
+
+    static class TestCommand extends BaseCommand {
+        public TestCommand(DbContext ctx) {
+            super(ctx);
+        } 
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        dbContext = DbConnManager.createAppDb("test");
+
+        baseCommand = new TestCommand(dbContext); 
+    }
+
+    @Test
+    public void testToList() throws Exception {
+       baseCommand.init("SELECT * FROM employees", List.of());
+
+       List<Employee> result = baseCommand.toList(Employee.class);
+
+       assert result.size() > 0;
+    }
+
+}

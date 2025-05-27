@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NHttpModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.http.Pipeline</a> &gt; <span class="el_source">NHttpModule.java</span></div><h1>NHttpModule.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.http.Pipeline;
+
+/**
+ * 类似 ASP.NET 中的 IHttpModule
+ */
+<span class="nc" id="L6">public abstract class NHttpModule {</span>
+    
+    /**
+     * NHttpModule[]中的排序位置，也可以理解为执行次序。
+     * @return 模块执行顺序
+     */
+    public int getOrder() {
+<span class="nc" id="L13">        return 2000;</span>
+    }
+
+    /**
+     * 模块初始化，只调用一次。
+     */
+    public void init() {
+<span class="nc" id="L20">    }</span>
+
+    /**
+     * BeginRequest
+     * @param httpContext HTTP上下文对象
+     */
+    public void beginRequest(NHttpContext httpContext) {
+<span class="nc" id="L27">    }</span>
+
+    /**
+     * AuthenticateRequest
+     * @param httpContext HTTP上下文对象
+     */
+    public void authenticateRequest(NHttpContext httpContext) throws Exception {
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * PostAuthenticateRequest
+     * @param httpContext HTTP上下文对象
+     */
+    public void postAuthenticateRequest(NHttpContext httpContext) {
+<span class="nc" id="L41">    }</span>
+
+    /**
+     * AuthorizeRequest
+     * @param httpContext HTTP上下文对象
+     */
+    public void authorizeRequest(NHttpContext httpContext) {
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * ResolveRequestCache
+     * @param httpContext HTTP上下文对象
+     */
+    public void resolveRequestCache(NHttpContext httpContext) {
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * PreFindAction
+     * @param httpContext HTTP上下文对象
+     */
+    public void preFindAction(NHttpContext httpContext) {
+<span class="nc" id="L62">    }</span>
+
+    /**
+     * PostFindAction
+     * @param httpContext HTTP上下文对象
+     */
+    public void postFindAction(NHttpContext httpContext) {
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * PreRequestExecute
+     * @param httpContext HTTP上下文对象
+     */
+    public void preRequestExecute(NHttpContext httpContext) {
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * PostRequestExecute
+     * @param httpContext HTTP上下文对象
+     */
+    public void postRequestExecute(NHttpContext httpContext) {
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * UpdateRequestCache
+     * @param httpContext HTTP上下文对象
+     */
+    public void updateRequestCache(NHttpContext httpContext) {
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * EndRequest
+     * @param httpContext HTTP上下文对象
+     */
+    public void endRequest(NHttpContext httpContext) {
+<span class="nc" id="L97">    }</span>
+
+    /**
+     * 异常处理。
+     * @param httpContext HTTP上下文对象
+     */
+    public void onError(NHttpContext httpContext) {
+<span class="nc" id="L104">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

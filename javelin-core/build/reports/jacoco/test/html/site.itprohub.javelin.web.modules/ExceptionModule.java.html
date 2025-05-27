@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.web.modules</a> &gt; <span class="el_source">ExceptionModule.java</span></div><h1>ExceptionModule.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.web.modules;
+
+import java.io.IOException;
+
+import site.itprohub.javelin.base.exceptions.HttpException;
+import site.itprohub.javelin.http.Pipeline.NHttpContext;
+import site.itprohub.javelin.http.Pipeline.NHttpModule;
+
+<span class="nc" id="L9">public class ExceptionModule extends NHttpModule {</span>
+    @Override
+    public int getOrder(){
+<span class="nc" id="L12">        return 9999;</span>
+    }
+
+    @Override
+    public void onError(NHttpContext httpContext) {
+<span class="nc" id="L17">        Exception ex = httpContext.lastException;</span>
+        // 如果请求没有异常，则不处理
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (ex == null) {</span>
+<span class="nc" id="L20">            return;</span>
+        }
+
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (ex instanceof HttpException) {</span>
+<span class="nc" id="L24">            HttpException httpEx = (HttpException) ex;</span>
+<span class="nc" id="L25">            httpContext.httpReply(httpEx.getErrorCode(), httpEx.getMessage());</span>
+<span class="nc" id="L26">            return;</span>
+        } else {
+<span class="nc" id="L28">            httpContext.httpReply(500, ex.getMessage());</span>
+        }
+<span class="nc" id="L30">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

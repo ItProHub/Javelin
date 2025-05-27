@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConfigHelper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.base.config</a> &gt; <span class="el_source">ConfigHelper.java</span></div><h1>ConfigHelper.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.base.config;
+
+import java.io.File;
+import java.nio.file.Paths;
+
+<span class="nc" id="L6">public class ConfigHelper {</span>
+
+    // 判断2个目录是否相同
+    // 一般情况下，假设 AppContext.BaseDirectory        :  /app/
+    //            那么 Environment.CurrentDirectory    :  /app
+    // 所以在比较时，要去掉结尾字符
+<span class="nc" id="L12">    private static final boolean isSame = </span>
+<span class="nc" id="L13">        Paths.get(System.getProperty(&quot;user.dir&quot;)).toString().equalsIgnoreCase(</span>
+<span class="nc" id="L14">            Paths.get(System.getProperty(&quot;user.dir&quot;)).normalize().toString());</span>
+
+    // 补充说明：在 .netcore 及以后版本中  AppDomain.CurrentDomain.BaseDirectory =&gt; AppContext.BaseDirectory
+    //          在 .netframework 中      AppContext.BaseDirectory =&gt;  AppDomain.CurrentDomain.BaseDirectory
+
+    /**
+     * 根据指定的相对路径，尝试获取配置文件的绝对路径。 如果尝试失败，返回NULL
+     */
+    public static String getFileAbsolutePath(String relativePath) {
+<span class="nc bnc" id="L23" title="All 4 branches missed.">        if (relativePath == null || relativePath.isEmpty()) {</span>
+<span class="nc" id="L24">            throw new IllegalArgumentException(&quot;relativePath cannot be null or empty&quot;);</span>
+        }
+
+<span class="nc" id="L27">        String path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
+<span class="nc" id="L28">        File file = new File(path);</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        if (file.exists()) {</span>
+<span class="nc" id="L30">            return path;</span>
+        }
+
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (!isSame) {</span>
+<span class="nc" id="L34">            path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
+<span class="nc" id="L35">            file = new File(path);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            if (file.exists()) {</span>
+<span class="nc" id="L37">                return path;</span>
+            }
+        }
+
+        // 没找到约定的路径，不管了~~
+<span class="nc" id="L42">        return path;</span>
+    }
+
+    /**
+     * 根据指定的相对路径，获取配置目录的绝对路径。 如果尝试失败，返回NULL
+     */
+    public static String getDirectoryAbsolutePath(String relativePath) {
+<span class="nc bnc" id="L49" title="All 4 branches missed.">        if (relativePath == null || relativePath.isEmpty()) {</span>
+<span class="nc" id="L50">            throw new IllegalArgumentException(&quot;relativePath cannot be null or empty&quot;);</span>
+        }
+
+<span class="nc" id="L53">        String path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
+<span class="nc" id="L54">        File directory = new File(path);</span>
+<span class="nc bnc" id="L55" title="All 4 branches missed.">        if (directory.exists() &amp;&amp; directory.isDirectory()) {</span>
+<span class="nc" id="L56">            return path;</span>
+        }
+
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (!isSame) {</span>
+<span class="nc" id="L60">            path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
+<span class="nc" id="L61">            directory = new File(path);</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">            if (directory.exists() &amp;&amp; directory.isDirectory()) {</span>
+<span class="nc" id="L63">                return path;</span>
+            }
+        }
+
+        // 这里不检查目录是否存，由调用方检查
+<span class="nc" id="L68">        return path;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

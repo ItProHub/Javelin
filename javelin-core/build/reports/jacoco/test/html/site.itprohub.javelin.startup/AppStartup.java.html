@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppStartup.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.startup</a> &gt; <span class="el_source">AppStartup.java</span></div><h1>AppStartup.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.startup;
+
+
+/**
+ * 应用启动类
+ */
+
+<span class="nc" id="L8">public class AppStartup {</span>
+
+    public static AppStartupOption STARTUP_OPTION;
+
+    public static void run(Class&lt;?&gt; appClass, String[] args) { // 重载run方法，支持AppStartupOption参数
+<span class="nc" id="L13">        run(appClass, args, null); // 调用重载方法，传入null作为默认值</span>
+<span class="nc" id="L14">    }</span>
+
+    public static void run(Class&lt;?&gt; appClass, String[] args, AppStartupOption startupOption) {
+
+        try{
+<span class="nc" id="L19">            startupOption = initOption(appClass, startupOption);</span>
+
+<span class="nc" id="L21">            JavelinStarter starter = new JavelinStarter();</span>
+
+            // 调用JavelinStarter的run方法，传入AppStartupOption参数
+<span class="nc" id="L24">            starter.run(appClass, args, startupOption);</span>
+<span class="nc" id="L25">        } catch (Exception e) { </span>
+            // 捕获异常
+<span class="nc" id="L27">            System.err.println(&quot;Javelin startup failed: &quot; + e.getMessage()); // 打印异常信息</span>
+<span class="nc" id="L28">        }</span>
+<span class="nc" id="L29">    }</span>
+
+    /**
+     * 初始化AppStartupOption参数
+     * @param appClass 应用类
+     * @param startupOption 启动选项
+     * @return AppStartupOption实例
+     * @throws Exception 异常
+     */
+    private static AppStartupOption initOption(Class&lt;?&gt; appClass, AppStartupOption startupOption) throws Exception { // ✅ 初始化AppStartupOption参数
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if(appClass == null) { // 如果appClass为空，则抛出异常</span>
+<span class="nc" id="L40">            throw new IllegalArgumentException(&quot;appClass cannot be null&quot;); // 抛出异常</span>
+        }
+
+<span class="nc" id="L43">        AppStartupOption option = AppStartupOption.create(startupOption);</span>
+
+        // 给静态变量赋值
+<span class="nc" id="L46">        AppStartup.STARTUP_OPTION = option;</span>
+
+<span class="nc" id="L48">        return option;</span>
+    }
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

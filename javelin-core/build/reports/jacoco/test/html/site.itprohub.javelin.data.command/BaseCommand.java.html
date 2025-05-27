@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.data.command</a> &gt; <span class="el_source">BaseCommand.java</span></div><h1>BaseCommand.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.data.command;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.paging.PageResult;
+
+public abstract class BaseCommand {
+    public DbContext dbContext;
+
+    public StringBuilder sbSql;
+
+<span class="fc" id="L16">    public List&lt;Object&gt; params = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L18">    public BaseCommand(DbContext dbContext) {</span>
+<span class="fc" id="L19">        this.dbContext = dbContext;</span>
+<span class="fc" id="L20">    }</span>
+
+    public void init(String sql, List&lt;Object&gt; params) {
+<span class="fc" id="L23">        this.sbSql = new StringBuilder(sql);</span>
+<span class="fc" id="L24">        this.params = params; </span>
+<span class="fc" id="L25">    }</span>
+
+    private &lt;T&gt; T execute(StatementCallback&lt;T&gt; action) {
+        try {   
+<span class="fc" id="L29">            dbContext.openConnection();</span>
+<span class="fc" id="L30">            return action.execute();</span>
+<span class="nc" id="L31">        } catch (Exception e) {</span>
+<span class="nc" id="L32">            throw new RuntimeException(&quot;执行 execute 失败: &quot; + action.getClass() + &quot;, error: &quot; + e.getMessage(), e); </span>
+        }
+        
+    }
+
+    public &lt;T&gt; List&lt;T&gt; toList(Class&lt;T&gt; clazz) {
+<span class="fc" id="L38">        return execute(() -&gt; {</span>
+<span class="fc" id="L39">            try (PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString())) {</span>
+<span class="fc" id="L40">                setParams(ps);</span>
+<span class="fc" id="L41">                ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L42">                List&lt;T&gt; result = new ArrayList&lt;&gt;(); </span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                while (rs.next()) {</span>
+<span class="fc" id="L44">                    result.add(BeanPropertyRowMapper.mapRow(rs, clazz)); </span>
+                }
+<span class="fc" id="L46">                return result;</span>
+<span class="nc" id="L47">            } catch(Exception e) {</span>
+<span class="nc" id="L48">                throw new RuntimeException(&quot;执行 ToList 失败: &quot; + sbSql.toString() + &quot;, error: &quot; + e.getMessage(), e); </span>
+            }
+        });
+    }
+
+
+    public int executeNonQuery() {
+<span class="nc" id="L55">        return execute(() -&gt; {</span>
+<span class="nc" id="L56">            try (PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString())) {</span>
+<span class="nc" id="L57">                setParams(ps);</span>
+<span class="nc" id="L58">                return ps.executeUpdate();</span>
+<span class="nc" id="L59">            } catch(Exception e) {</span>
+<span class="nc" id="L60">                throw new RuntimeException(&quot;执行 executeNonQuery 失败: &quot; + sbSql.toString() + &quot;, error: &quot; + e.getMessage(), e); </span>
+            }
+        });
+    }
+
+    public &lt;T&gt; T executeScalar(Class&lt;T&gt; clazz) {
+<span class="nc" id="L66">        return execute(() -&gt; {</span>
+<span class="nc" id="L67">            try ( PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString())) {</span>
+<span class="nc" id="L68">                setParams(ps);</span>
+<span class="nc" id="L69">                ResultSet rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                if (rs.next()) {</span>
+<span class="nc" id="L71">                    return (T) rs.getObject(1);</span>
+                }
+<span class="nc" id="L73">                return null; </span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            } catch ( Exception e) {</span>
+<span class="nc" id="L75">                throw new RuntimeException(&quot;执行 executeScalar 失败: &quot; + sbSql.toString() + &quot;, error: &quot; + e.getMessage(), e);</span>
+            }
+        });
+    }
+
+    public &lt;T&gt; T toScalarList(Class&lt;T&gt; clazz) {
+<span class="nc" id="L81">        return execute(() -&gt; {</span>
+<span class="nc" id="L82">            try ( PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString())) {</span>
+<span class="nc" id="L83">                setParams(ps);</span>
+<span class="nc" id="L84">                ResultSet rs = ps.executeQuery();</span>
+<span class="nc" id="L85">                List&lt;Object&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L87">                    result.add((T) rs.getObject(1));</span>
+                }
+<span class="nc" id="L89">                return null; </span>
+<span class="nc" id="L90">            } catch ( Exception e) {</span>
+<span class="nc" id="L91">                throw new RuntimeException(&quot;执行 executeScalar 失败: &quot; + sbSql.toString() + &quot;, error: &quot; + e.getMessage(), e);</span>
+            }
+        });
+    }
+
+    public &lt;T&gt; T toSingle(Class&lt;T&gt; clazz) {
+<span class="fc" id="L97">        return execute(() -&gt; {</span>
+<span class="fc" id="L98">            try (PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString())) {</span>
+<span class="fc" id="L99">                setParams(ps);</span>
+<span class="fc" id="L100">                ResultSet rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                if (rs.next()) {</span>
+<span class="fc" id="L102">                    return BeanPropertyRowMapper.mapRow(rs, clazz); </span>
+                }
+<span class="fc" id="L104">                return null;</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            } catch(Exception e) {</span>
+<span class="nc" id="L106">                throw new RuntimeException(&quot;执行 toSingle 失败: &quot; + sbSql + &quot;, error: &quot; + e.getMessage(), e); </span>
+            }
+        });
+    }
+
+    public &lt;T&gt; PageResult&lt;T&gt; toPageList(Class&lt;T&gt; clazz, int pageIndex, int pageSize) {
+<span class="nc" id="L112">        return execute(() -&gt; {</span>
+<span class="nc" id="L113">            int offset = pageIndex * pageSize;</span>
+            // 构造分页sql
+<span class="nc" id="L115">            String pageSql = sbSql.toString() + &quot; LIMIT ?, ?&quot;;</span>
+
+<span class="nc" id="L117">            String countSql = &quot; SELECT COUNT(*) FROM (&quot; + sbSql.toString() + &quot;) AS total_count&quot;;</span>
+
+            try (
+<span class="nc" id="L120">                PreparedStatement dataPs = dbContext.getConnection().prepareStatement(pageSql);</span>
+<span class="nc" id="L121">                PreparedStatement countPs = dbContext.getConnection().prepareStatement(countSql)</span>
+            ) {
+<span class="nc" id="L123">                setParams(dataPs);</span>
+<span class="nc" id="L124">                setParams(countPs);</span>
+
+                // 追加分页参数
+<span class="nc" id="L127">                dataPs.setInt(params.size() + 1, offset);</span>
+<span class="nc" id="L128">                dataPs.setInt(params.size() + 2, pageSize);</span>
+
+                // 查询总数
+<span class="nc" id="L131">                ResultSet countRs = countPs.executeQuery();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                int total = countRs.next() ? countRs.getInt(1) : 0;</span>
+
+                // 查询列表
+<span class="nc" id="L135">                ResultSet rs = dataPs.executeQuery();</span>
+<span class="nc" id="L136">                List&lt;T&gt; result = new ArrayList&lt;&gt;(); </span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L138">                result.add(BeanPropertyRowMapper.mapRow(rs, clazz));</span>
+                }
+
+<span class="nc" id="L141">                return new PageResult&lt;T&gt;(total, result);</span>
+<span class="nc" id="L142">            } catch(Exception e) {</span>
+<span class="nc" id="L143">                throw new RuntimeException(&quot;执行 toPageList 失败: &quot; + sbSql.toString() + &quot;, error: &quot; + e.getMessage(), e); </span>
+            }
+        });
+    }
+
+
+
+    private void setParams(PreparedStatement ps) throws Exception {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for (int i = 0; i &lt; params.size(); i++) {</span>
+<span class="fc" id="L152">            ps.setObject(i + 1, params.get(i));</span>
+        }
+<span class="fc" id="L154">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="site.itprohub.javelin.data.DbContextTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-05-27T08:19:36.631Z" hostname="WH-PC-LVJ" time="0.023">
+  <properties/>
+  <testcase name="testClose_shouldCloseConnection()" classname="site.itprohub.javelin.data.DbContextTest" time="0.02"/>
+  <testcase name="testGetConnection_lazyInit()" classname="site.itprohub.javelin.data.DbContextTest" time="0.001"/>
+  <testcase name="testGetConnection_shouldReturnValidConnection()" classname="site.itprohub.javelin.data.DbContextTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

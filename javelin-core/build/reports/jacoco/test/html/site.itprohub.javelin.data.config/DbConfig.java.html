@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DbConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.data.config</a> &gt; <span class="el_source">DbConfig.java</span></div><h1>DbConfig.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.data.config;
+
+import site.itprohub.javelin.data.DbContext;
+
+<span class="fc" id="L5">public class DbConfig {</span>
+    public String dbType;
+
+    public String server;
+
+<span class="fc" id="L10">    public Integer port = 3306;</span>
+
+    public String dbName;
+
+    public String dbUser;
+
+    public String dbPassword;
+
+    public String args;    
+    
+<span class="fc" id="L20">    private String driver = &quot;com.mysql.cj.jdbc.Driver&quot;;</span>
+
+<span class="fc" id="L22">    private int maxPoolSize = 10; // Default value for maxPoolSize</span>
+
+<span class="fc" id="L24">    private int minIdle = 5; // 连接池中保持的最小空闲连接数量</span>
+
+<span class="fc" id="L26">    private long maxIdleTime = 60000; // Default value for maxIdleTime (1 minute)</span>
+
+<span class="fc" id="L28">    private long connectionTimeout = 30000L; // Default value for connectionTimeout (30 seconds)</span>
+
+
+    public String getUrl() {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        port = port == null ? 3306 : port;</span>
+<span class="fc" id="L33">        return &quot;jdbc:&quot; + dbType + &quot;://&quot; + server + &quot;:&quot; + port + &quot;/&quot; + dbName; </span>
+    }
+
+    public String getUsername(){
+<span class="fc" id="L37">        return dbUser;</span>
+    }
+
+    public String getPassword(){
+<span class="fc" id="L41">        return dbPassword;</span>
+    }
+
+    public String getDriverClassName(){
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if(dbType.equals(&quot;mysql&quot;))</span>
+<span class="fc" id="L46">            return &quot;com.mysql.cj.jdbc.Driver&quot;;</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        else if(dbType.equals(&quot;sqlserver&quot;))</span>
+<span class="fc" id="L48">            return &quot;com.microsoft.sqlserver.jdbc.SQLServerDriver&quot;;</span>
+        else
+<span class="nc" id="L50">            return driver;</span>
+    }
+
+    public int getMaxPoolSize() {
+<span class="fc" id="L54">        return maxPoolSize;</span>
+    }
+
+    public int getMinIdle() {
+<span class="fc" id="L58">        return minIdle;</span>
+    }
+
+    public long getConnectionTimeout() {
+<span class="fc" id="L62">        return connectionTimeout; </span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

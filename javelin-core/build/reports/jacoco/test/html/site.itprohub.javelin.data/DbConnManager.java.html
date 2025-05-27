@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DbConnManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javelin-core</a> &gt; <a href="index.source.html" class="el_package">site.itprohub.javelin.data</a> &gt; <span class="el_source">DbConnManager.java</span></div><h1>DbConnManager.java</h1><pre class="source lang-java linenums">package site.itprohub.javelin.data;
+
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import site.itprohub.javelin.data.config.DbConfig;
+import site.itprohub.javelin.data.config.DbConfigProvider;
+import site.itprohub.javelin.data.datasource.DataSourceRegistry;
+
+<span class="nc" id="L11">public class DbConnManager {</span>
+
+    public static DbConfig getAppDbConfig(String connName) throws SQLException {
+<span class="fc bfc" id="L14" title="All 4 branches covered.">        if ( connName == null || connName.isEmpty()) {</span>
+<span class="fc" id="L15">            throw new IllegalArgumentException(&quot;Connection name cannot be null or empty&quot;);</span>
+        }
+
+<span class="fc" id="L18">        return DbConfigProvider.getAppDbConfig(connName);</span>
+    }
+
+
+    public static DbContext createTenantDb(String tenantId) {
+<span class="nc" id="L23">        return new DbContext(null);</span>
+    }
+
+    public static DbContext createAppDb(String dbName) throws SQLException {
+
+<span class="fc" id="L28">        DbConfig dbConfig = getAppDbConfig(dbName);</span>
+
+<span class="fc" id="L30">        DataSource dataSource = DataSourceRegistry.getDataSource(dbName, dbConfig);</span>
+
+<span class="fc" id="L32">        return new DbContext(dataSource);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
