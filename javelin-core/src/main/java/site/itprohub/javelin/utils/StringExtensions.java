@@ -20,4 +20,9 @@ public class StringExtensions {
         }
     }
 
+
+    public static Boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
+
 }

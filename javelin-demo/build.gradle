@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     // 添加对 javelin-core 的依赖
-    implementation project(':javelin-core')
+    implementation project(':javelin-web')
 
     // 其他可能的依赖
 }

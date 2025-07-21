@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="site.itprohub.javelin.data.config.DbConfigProviderTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-05-27T08:19:37.591Z" hostname="WH-PC-LVJ" time="0.006">
+<testsuite name="site.itprohub.javelin.data.config.DbConfigProviderTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-07-18T09:45:00.888Z" hostname="WH-PC-LVJ" time="0.009">
   <properties/>
-  <testcase name="testGetAppDbConfig_throwsException()" classname="site.itprohub.javelin.data.config.DbConfigProviderTest" time="0.004"/>
+  <testcase name="testGetAppDbConfig_throwsException()" classname="site.itprohub.javelin.data.config.DbConfigProviderTest" time="0.006"/>
   <testcase name="testGetAppDbConfig()" classname="site.itprohub.javelin.data.config.DbConfigProviderTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

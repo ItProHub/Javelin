@@ -9,9 +9,9 @@ import java.nio.file.Paths;
     // 一般情况下，假设 AppContext.BaseDirectory        :  /app/
     //            那么 Environment.CurrentDirectory    :  /app
     // 所以在比较时，要去掉结尾字符
-<span class="nc" id="L12">    private static final boolean isSame = </span>
-<span class="nc" id="L13">        Paths.get(System.getProperty(&quot;user.dir&quot;)).toString().equalsIgnoreCase(</span>
-<span class="nc" id="L14">            Paths.get(System.getProperty(&quot;user.dir&quot;)).normalize().toString());</span>
+<span class="fc" id="L12">    private static final boolean isSame = </span>
+<span class="fc" id="L13">        Paths.get(System.getProperty(&quot;user.dir&quot;)).toString().equalsIgnoreCase(</span>
+<span class="fc" id="L14">            Paths.get(System.getProperty(&quot;user.dir&quot;)).normalize().toString());</span>
 
     // 补充说明：在 .netcore 及以后版本中  AppDomain.CurrentDomain.BaseDirectory =&gt; AppContext.BaseDirectory
     //          在 .netframework 中      AppContext.BaseDirectory =&gt;  AppDomain.CurrentDomain.BaseDirectory
@@ -20,17 +20,17 @@ import java.nio.file.Paths;
      * 根据指定的相对路径，尝试获取配置文件的绝对路径。 如果尝试失败，返回NULL
      */
     public static String getFileAbsolutePath(String relativePath) {
-<span class="nc bnc" id="L23" title="All 4 branches missed.">        if (relativePath == null || relativePath.isEmpty()) {</span>
+<span class="pc bpc" id="L23" title="2 of 4 branches missed.">        if (relativePath == null || relativePath.isEmpty()) {</span>
 <span class="nc" id="L24">            throw new IllegalArgumentException(&quot;relativePath cannot be null or empty&quot;);</span>
         }
 
-<span class="nc" id="L27">        String path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
-<span class="nc" id="L28">        File file = new File(path);</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">        if (file.exists()) {</span>
+<span class="fc" id="L27">        String path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
+<span class="fc" id="L28">        File file = new File(path);</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (file.exists()) {</span>
 <span class="nc" id="L30">            return path;</span>
         }
 
-<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (!isSame) {</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (!isSame) {</span>
 <span class="nc" id="L34">            path = Paths.get(System.getProperty(&quot;user.dir&quot;), relativePath).toString();</span>
 <span class="nc" id="L35">            file = new File(path);</span>
 <span class="nc bnc" id="L36" title="All 2 branches missed.">            if (file.exists()) {</span>
@@ -39,7 +39,7 @@ import java.nio.file.Paths;
         }
 
         // 没找到约定的路径，不管了~~
-<span class="nc" id="L42">        return path;</span>
+<span class="fc" id="L42">        return path;</span>
     }
 
     /**

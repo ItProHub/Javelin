@@ -20,6 +20,7 @@ logs/
 mvnw
 mvnw.cmd
 .gradle/
+/.gradle/
 gradle/
 gradlew
 gradlew.bat
@@ -91,3 +92,5 @@ nb-configuration.xml
 .fake
 
 tomcat/
+/.gradle
+/javelin-core/build

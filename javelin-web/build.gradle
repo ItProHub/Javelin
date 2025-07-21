@@ -1,0 +1,63 @@
+plugins {
+    id 'java-library' // ✅ 推荐（适用于你这种做“框架库”的模块）
+    id 'jacoco'  // 用于生成测试覆盖率报告
+}
+
+group = 'site.itprohub'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ✅ JUnit 5 API + Engine
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    // ✅ Mockito
+    testImplementation 'org.mockito:mockito-core:5.10.0'
+    // ✅ 断言增强（可选）
+    testImplementation 'org.assertj:assertj-core:3.25.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30' // Lombok 库
+    annotationProcessor 'org.projectlombok:lombok:1.18.30' // Lombok 注解处理器
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.20'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0' // 注意版本匹配 Tomcat    
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'io.jsonwebtoken:jjwt:0.12.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+
+    api project(':javelin-core')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["-parameters"]
+    options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+jacoco {
+    toolVersion = "0.8.10"  // 推荐使用最新版
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport  // 确保测试后自动生成覆盖率报告
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+        csv.required.set(false)
+    }
+}

@@ -17,7 +17,6 @@ public class HelloController {
     }
 
     @GetMapping("/hello")
-    @AllowAnonymous
     public String hello() {
         return "Hello World from " + userService.getUserById(1) ;
     }

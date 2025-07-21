@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="site.itprohub.javelin.data.config.DbConfigTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-05-27T08:19:37.599Z" hostname="WH-PC-LVJ" time="0.004">
+<testsuite name="site.itprohub.javelin.data.config.DbConfigTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-07-18T09:45:00.901Z" hostname="WH-PC-LVJ" time="0.016">
   <properties/>
-  <testcase name="testDriverClassName_default()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.0"/>
-  <testcase name="testDefaultPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.0"/>
-  <testcase name="testDriverClassName_custom()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.0"/>
-  <testcase name="testUrl_defaultPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
-  <testcase name="testConnectionPoolSize_default()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.0"/>
-  <testcase name="testUrl_customPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.0"/>
+  <testcase name="testDriverClassName_default()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
+  <testcase name="testDefaultPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
+  <testcase name="testDriverClassName_custom()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
+  <testcase name="testUrl_defaultPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.004"/>
+  <testcase name="testConnectionPoolSize_default()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
+  <testcase name="testUrl_customPort()" classname="site.itprohub.javelin.data.config.DbConfigTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

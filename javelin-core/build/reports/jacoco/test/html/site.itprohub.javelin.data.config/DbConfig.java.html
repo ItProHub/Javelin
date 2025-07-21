@@ -2,7 +2,7 @@
 
 import site.itprohub.javelin.data.DbContext;
 
-<span class="fc" id="L5">public class DbConfig {</span>
+<span class="fc" id="L5">public class DbConfig  implements Cloneable {</span>
     public String dbType;
 
     public String server;
@@ -60,6 +60,15 @@ import site.itprohub.javelin.data.DbContext;
 
     public long getConnectionTimeout() {
 <span class="fc" id="L62">        return connectionTimeout; </span>
+    }
+
+     @Override
+    public DbConfig clone() {
+        try {
+<span class="nc" id="L68">            return (DbConfig) super.clone();  // 浅拷贝</span>
+<span class="nc" id="L69">        } catch (CloneNotSupportedException e) {</span>
+<span class="nc" id="L70">            throw new AssertionError();  // 不可能发生</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

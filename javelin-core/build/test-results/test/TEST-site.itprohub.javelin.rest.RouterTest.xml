@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="site.itprohub.javelin.rest.RouterTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-05-27T08:19:35.384Z" hostname="WH-PC-LVJ" time="0.021">
-  <properties/>
-  <testcase name="testRouteMatch()" classname="site.itprohub.javelin.rest.RouterTest" time="0.021"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -2,7 +2,7 @@ package site.itprohub.javelin.log;
 
 import java.util.List;
 
-import site.itprohub.javelin.http.Pipeline.HttpPipelineContext;
+import site.itprohub.javelin.base.BasePipelineContext;
 import site.itprohub.javelin.log.models.*;
 
 public class OprLogScope {
@@ -11,7 +11,7 @@ public class OprLogScope {
 
     public OprLog oprlog;
 
-    public static OprLogScope start(HttpPipelineContext pipelineContext) {
+    public static OprLogScope start(BasePipelineContext pipelineContext) {
         OprLogScope scope = new OprLogScope();
 
         scope.oprlog = OprLog.create(pipelineContext);
@@ -24,7 +24,7 @@ public class OprLogScope {
     }
 
 
-    public int saveOprLog(HttpPipelineContext pipelineContext) {
+    public int saveOprLog(BasePipelineContext pipelineContext) {
         LogHelper.Write(this.oprlog);
         return 1;
     }

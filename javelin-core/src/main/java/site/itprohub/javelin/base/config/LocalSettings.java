@@ -28,5 +28,13 @@ public class LocalSettings{
         }
         return Integer.parseInt(value);
     }
+
+    public static boolean getBool(String name, boolean defaultValue) {
+        String value = getSetting(name);
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value);
+    }
     
 }

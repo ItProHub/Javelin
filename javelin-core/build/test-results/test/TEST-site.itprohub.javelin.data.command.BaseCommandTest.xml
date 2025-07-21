@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="site.itprohub.javelin.data.command.BaseCommandTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-05-27T08:19:36.659Z" hostname="WH-PC-LVJ" time="0.931">
+<testsuite name="site.itprohub.javelin.data.command.BaseCommandTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-07-18T09:44:59.798Z" hostname="WH-PC-LVJ" time="1.087">
   <properties/>
-  <testcase name="testToList()" classname="site.itprohub.javelin.data.command.BaseCommandTest" time="0.931"/>
+  <testcase name="testToList()" classname="site.itprohub.javelin.data.command.BaseCommandTest" time="1.087"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation

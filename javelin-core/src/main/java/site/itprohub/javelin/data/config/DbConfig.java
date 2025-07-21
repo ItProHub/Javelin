@@ -2,7 +2,7 @@ package site.itprohub.javelin.data.config;
 
 import site.itprohub.javelin.data.DbContext;
 
-public class DbConfig {
+public class DbConfig  implements Cloneable {
     public String dbType;
 
     public String server;
@@ -60,5 +60,14 @@ public class DbConfig {
 
     public long getConnectionTimeout() {
         return connectionTimeout; 
+    }
+
+     @Override
+    public DbConfig clone() {
+        try {
+            return (DbConfig) super.clone();  // 浅拷贝
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();  // 不可能发生
+        }
     }
 }

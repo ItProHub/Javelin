@@ -3,7 +3,7 @@ package site.itprohub.javelin.log;
 import java.util.Date;
 import java.util.UUID;
 
-import site.itprohub.javelin.http.Pipeline.HttpPipelineContext;
+import site.itprohub.javelin.base.BasePipelineContext;
 import site.itprohub.javelin.utils.StatusCodeUtils;
 
 public class OprLog {
@@ -44,6 +44,8 @@ public class OprLog {
 
     public String userName;
 
+    public String userRole;
+
     public String module;
 
     public String controller;
@@ -52,15 +54,15 @@ public class OprLog {
     //#endregion
 
 
-    static OprLog create(HttpPipelineContext pipelineContext) {
+    static OprLog create(BasePipelineContext pipelineContext) {
         OprLog log = new OprLog();
         
         return log;
     }
 
 
-    public void setBaseInfo(HttpPipelineContext pipelineContext) {
-        if ( pipelineContext.routeDefinition == null ) {
+    public void setBaseInfo(BasePipelineContext pipelineContext) {
+        if ( pipelineContext == null ) {
             this.startTime = new Date();
             this.oprId =  UUID.randomUUID().toString();
         } else {
