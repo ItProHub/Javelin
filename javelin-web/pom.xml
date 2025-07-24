@@ -12,6 +12,14 @@
   <url>https://github.com/ItProHub/Javelin</url>
   <packaging>jar</packaging>
 
+    <repositories>
+  <repository>
+    <id>central-direct</id>
+    <url>https://repo1.maven.org/maven2/</url>
+  </repository>
+</repositories>
+
+
   <licenses>
     <license>
       <name>The Apache License, Version 2.0</name>
@@ -37,100 +45,53 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
 
 
     <dependencies>
-    <!-- ✅ Lombok（仅编译期依赖） -->
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.30</version>
-        <scope>provided</scope>
-    </dependency>
+    
+        <dependency>
+            <groupId>site.itprohub</groupId>
+            <artifactId>javelin-core</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
-    <!-- ✅ 内嵌 Tomcat -->
-    <dependency>
-        <groupId>org.apache.tomcat.embed</groupId>
-        <artifactId>tomcat-embed-core</artifactId>
-        <version>10.1.20</version>
-    </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
 
-    <!-- ✅ Servlet API -->
-    <dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <version>6.0.0</version>
-        <scope>provided</scope>
-    </dependency>
 
-    <!-- ✅ SLF4J 日志接口 -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.32</version>
-    </dependency>
+        <!-- ✅ JUnit 5 单元测试 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- ✅ 反射工具 Reflections -->
-    <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>0.10.2</version>
-    </dependency>
-
-    <!-- ✅ Gson -->
-    <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.10.1</version>
-    </dependency>
-
-    <!-- ✅ MySQL JDBC 驱动 -->
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.33</version>
-    </dependency>
-
-    <!-- ✅ HikariCP 连接池 -->
-    <dependency>
-        <groupId>com.zaxxer</groupId>
-        <artifactId>HikariCP</artifactId>
-        <version>5.0.1</version>
-    </dependency>
-
-    <!-- ✅ JUnit 5 单元测试 -->
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.10.0</version>
-        <scope>test</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.10.0</version>
-        <scope>test</scope>
-    </dependency>
-
-    <!-- ✅ Mockito 单元测试模拟框架 -->
-    <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>5.10.0</version>
-        <scope>test</scope>
-    </dependency>
-
-    <!-- ✅ AssertJ 断言工具 -->
-    <dependency>
-        <groupId>org.assertj</groupId>
-        <artifactId>assertj-core</artifactId>
-        <version>3.25.1</version>
-        <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
 
 
