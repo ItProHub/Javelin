@@ -26,7 +26,8 @@ public class MyBeanController {
         System.out.println("Bean is being destroyed");
     }
 
-    @GetMapping("/mybean")
+    @HttpGet
+    @Route("/mybean")
     @AllowAnonymous
     public String myBean() {
         return "Hello World from " + this.getClass().getName() ;

@@ -2,11 +2,11 @@ package site.itprohub.javelin.data.entity;
 
 
 public interface IEntity<T> {
-    T findById(int id);
+    T findById(Object id);
 
     int insert(T entity);
 
     int update(T entity);
 
-    int delete(int id);
+    int delete(Object id);
 }

@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import site.itprohub.javelin.base.init.ApplicationInitializer;
 import site.itprohub.javelin.http.tomcat.JavelinEmbeddedTomcatServer;
 import site.itprohub.javelin.utils.EnvUtils;
-import site.itprohub.javelin.web.WebInit;
 
 public class JavelinStarter {
 
@@ -28,9 +28,7 @@ public class JavelinStarter {
 
         JavelinHost.initNHttpApplication();
 
-        WebInit.init();
-
-        applicationInit();
+        applicationInit(appClass);
 
         System.out.println(" Javelin initialized!");
 
@@ -61,7 +59,7 @@ public class JavelinStarter {
         }
     }
 
-    private void applicationInit()
+    private void applicationInit(Class<?> appClass)
     {
         for (BaseAppStarter starter : starters) {
             try {
@@ -71,7 +69,7 @@ public class JavelinStarter {
             }
         }
 
-        JavelinInitializer.applicationInit();
+        JavelinInitializer.applicationInit(appClass);
 
         for (BaseAppStarter starter : starters) {
             try {

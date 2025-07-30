@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import site.itprohub.javelin.annotations.data.DbColumn;
 import site.itprohub.javelin.annotations.data.DbEntity;
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class Entity<T> implements IEntity<T> {
     
@@ -23,7 +23,7 @@ public class Entity<T> implements IEntity<T> {
     }
 
     @Override
-    public T findById(int id) {
+    public T findById(Object  id) {
         String tableName = getTableName();
         String pkColumn = getIdColumn();
 
@@ -115,7 +115,7 @@ public class Entity<T> implements IEntity<T> {
     }
 
     @Override
-    public int delete(int id) {
+    public int delete(Object id) {
         String tableName = getTableName();
         String pkColumn = getIdColumn();
 
@@ -163,7 +163,7 @@ public class Entity<T> implements IEntity<T> {
 
         String sql = String.format("SELECT * FROM %s %s", tableName, where);
 
-        return dbContext.CPQuery().create(sql, whereClauses).toSingle(entityType);
+        return dbContext.CPQuery().create(sql, whereParams.toArray()).toSingle(entityType);
     }
 
     public List<T> toList() {
@@ -172,7 +172,7 @@ public class Entity<T> implements IEntity<T> {
 
         String sql = String.format("SELECT * FROM %s %s", tableName, where);
 
-        return dbContext.CPQuery().create(sql , whereClauses).toList(entityType);
+        return dbContext.CPQuery().create(sql , whereParams.toArray()).toList(entityType);
     }
 
     private String buildWhereClause() {

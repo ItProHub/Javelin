@@ -2,9 +2,8 @@ package site.itprohub.javelin.annotations;
 
 import java.lang.annotation.*;
 
-@HttpMethodMapping(method = "GET")
+@HttpMethodMapping(method = "POST")
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GetMapping {
-    String value();
+public @interface HttpPost {
 }

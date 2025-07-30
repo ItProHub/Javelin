@@ -1,6 +1,7 @@
 package site.itprohub.javelin.data.config;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
+import site.itprohub.javelin.data.multidb.DatabaseClients;
 
 public class DbConfig  implements Cloneable {
     public String dbType;
@@ -17,7 +18,7 @@ public class DbConfig  implements Cloneable {
 
     public String args;    
     
-    private String driver = "com.mysql.cj.jdbc.Driver";
+    private String driver = DatabaseClients.MYSQL;
 
     private int maxPoolSize = 10; // Default value for maxPoolSize
 
@@ -33,6 +34,11 @@ public class DbConfig  implements Cloneable {
         return "jdbc:" + dbType + "://" + server + ":" + port + "/" + dbName; 
     }
 
+    public String getConnectionString() {
+        port = port == null ? 3306 : port;
+        return "jdbc:" + dbType + "://" + server + ":" + port + "/" + dbName + "?user=" + dbUser + "&password=" + dbPassword; 
+    }
+
     public String getUsername(){
         return dbUser;
     }
@@ -43,9 +49,9 @@ public class DbConfig  implements Cloneable {
 
     public String getDriverClassName(){
         if(dbType.equals("mysql"))
-            return "com.mysql.cj.jdbc.Driver";
+            return DatabaseClients.MYSQL;
         else if(dbType.equals("sqlserver"))
-            return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+            return DatabaseClients.SQLSERVER;
         else
             return driver;
     }

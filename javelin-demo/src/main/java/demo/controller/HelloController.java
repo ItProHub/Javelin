@@ -16,33 +16,39 @@ public class HelloController {
         this.userService = userService; // ✅ 注入UserService实例 
     }
 
-    @GetMapping("/hello")
+    @HttpGet
+    @Route("/hello")
     public String hello() {
         return "Hello World from " + userService.getUserById(1) ;
     }
 
-    @GetMapping("/query")
+    @HttpGet
+    @Route("/query")
     public String query(@FromQuery String name) {
         return "Hello World from " + name ;
     }
 
-    @GetMapping("/get/{id}")
+    @HttpGet
+    @Route("/get/{id}")
     @AllowAnonymous
     public String get(@FromRoute int id) {
         return " This is a GET request. " + userService.getUserById(id);
     }
 
-    @PostMapping("/post")
+    @HttpPost
+    @Route("/post")
     public String post(@FromBody User user) {
         return " User: " + user.getUsername();
     }
 
-    @GetMapping("/user/get/{id}")
+    @HttpGet
+    @Route("/user/get/{id}")
     public User GetUser(@FromRoute int id) {
         return new User("查鲜花的小牛粪", 18);
     }
 
-    @GetMapping("/error")
+    @HttpGet
+    @Route("/error")
     @AllowAnonymous
     public void error() throws Exception {
         throw new Exception("测试异常");

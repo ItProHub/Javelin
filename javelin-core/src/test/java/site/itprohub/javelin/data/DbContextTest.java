@@ -1,8 +1,17 @@
 
 package site.itprohub.javelin.data;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import site.itprohub.javelin.data.config.DbConfig;
+import site.itprohub.javelin.data.context.ConnectionInfo;
+import site.itprohub.javelin.data.context.DbContext;
+import site.itprohub.javelin.data.multidb.DatabaseClients;
+import site.itprohub.javelin.data.multidb.DbClientFactory;
+import site.itprohub.javelin.data.multidb.MysqlClientProvider;
+import site.itprohub.javelin.data.multidb.SqlServerClientProvider;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,36 +21,41 @@ import static org.mockito.Mockito.*;
 
 public class DbContextTest {
 
+     @BeforeEach
+    void setup() {
+        DbClientFactory.registerProvider(DatabaseClients.MYSQL, MysqlClientProvider.INSTANCE);
+        DbClientFactory.registerProvider(DatabaseClients.SQLSERVER, SqlServerClientProvider.INSTANCE);
+    }
     @Test
     void testGetConnection_shouldReturnValidConnection() throws SQLException {
-        // 模拟 DataSource 和 Connection
-        javax.sql.DataSource mockDataSource = mock(javax.sql.DataSource.class);
-        Connection mockConnection = mock(Connection.class);
-        when(mockDataSource.getConnection()).thenReturn(mockConnection);
+        DbConfig dbConfig = DbConnManager.getAppDbConfig("test");
+
+        ConnectionInfo connInfo = new ConnectionInfo(dbConfig);
 
         // 构造 DbContext
-        DbContext dbContext = new DbContext(mockDataSource);
+        DbContext dbContext = new DbContext(connInfo);
         // 手动打开连接
         dbContext.openConnection();
         // 调用 getConnection
         Connection conn = dbContext.getConnection();
         assertNotNull(conn);
-        assertEquals(mockConnection, conn);
     }
 
     @Test
     void testClose_shouldCloseConnection() throws SQLException {
-        // 模拟 Connection
-        Connection mockConnection = mock(Connection.class);
-        javax.sql.DataSource mockDataSource = mock(javax.sql.DataSource.class);
-        when(mockDataSource.getConnection()).thenReturn(mockConnection);
+        DbConfig dbConfig = DbConnManager.getAppDbConfig("test");
 
+        ConnectionInfo connInfo = new ConnectionInfo(dbConfig);
         // 使用 DbContext 并关闭
-        DbContext dbContext = new DbContext(mockDataSource);
+        DbContext dbContext = new DbContext(connInfo);
         dbContext.openConnection(); // 打开连接
         dbContext.close();         // 关闭连接
 
-        verify(mockConnection, times(1)).close();
+
+        RuntimeException ex = assertThrows(
+            RuntimeException.class,
+            () -> dbContext.getConnection()
+        );
     }
 
     @Test
@@ -51,12 +65,18 @@ public class DbContextTest {
         Connection mockConnection = mock(Connection.class);
         when(mockDataSource.getConnection()).thenReturn(mockConnection);
 
-        DbContext dbContext = new DbContext(mockDataSource);
-        // 未调用 getConnection 前，不应创建连接
-        verify(mockDataSource, times(0)).getConnection();
+        DbConfig dbConfig = DbConnManager.getAppDbConfig("test");
+
+
+        DbContext dbContext = DbContext.create(dbConfig);
+        // 未调用 openConnection 前，不应创建连接
+         RuntimeException ex = assertThrows(
+            RuntimeException.class,
+            () -> dbContext.getConnection()
+        );
 
         // 调用后才初始化
         dbContext.openConnection();
-        verify(mockDataSource, times(1)).getConnection();
+        assertNotNull(dbContext.getConnection());
     }
 }

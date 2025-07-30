@@ -1,6 +1,6 @@
 package site.itprohub.javelin.data.entity;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class EntityFactory {
     private final DbContext dbContext;

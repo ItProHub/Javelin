@@ -3,6 +3,7 @@ package site.itprohub.javelin.data;
 import java.sql.Connection;
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,8 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import site.itprohub.javelin.data.config.DbConfig;
+import site.itprohub.javelin.data.context.ConnectionInfo;
+import site.itprohub.javelin.data.context.DbContext;
+import site.itprohub.javelin.data.multidb.DatabaseClients;
+import site.itprohub.javelin.data.multidb.DbClientFactory;
+import site.itprohub.javelin.data.multidb.MysqlClientProvider;
+import site.itprohub.javelin.data.multidb.SqlServerClientProvider;
 
 public class DbConnManagerTest {
+
+    @BeforeEach
+    void setup() {
+        DbClientFactory.registerProvider(DatabaseClients.MYSQL, MysqlClientProvider.INSTANCE);
+        DbClientFactory.registerProvider(DatabaseClients.SQLSERVER, SqlServerClientProvider.INSTANCE);
+    }
 
     @Test
     void testGetAppDbConfig_throwsException() {
@@ -33,25 +46,22 @@ public class DbConnManagerTest {
 
     @Test
     void testCreateAppDb() throws Exception {
-        DbConfig mockConfig = mock(DbConfig.class);
-        Connection mockConnection = mock(Connection.class);
-        DataSource mockDataSource = mock(DataSource.class);
+        DbConfig mockConfig = DbConnManager.getAppDbConfig("test");
 
-        when(mockDataSource.getConnection()).thenReturn(mockConnection);
+        ConnectionInfo conn = new ConnectionInfo(mockConfig);
 
-        DbConnManagerProxy.setMockDbConfig("test", mockConfig);
-        DbConnManagerProxy.setMockDataSource("test", mockDataSource);
-
-
-        DbContext dbContext = new DbContext(mockDataSource);
+        DbContext dbContext = new DbContext(conn);
         dbContext.openConnection();
         assertNotNull(dbContext);
-        assertEquals(mockConnection, dbContext.getConnection());
+        assertNotNull(dbContext.getConnection());
     }
 
     @Test
     void testCreateTenantDb() {
-        DbContext dbContext = new DbContext(null);
-        assertNotNull(dbContext);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> new DbContext(null)
+        );
+        
     }
 }

@@ -1,9 +1,9 @@
 package site.itprohub.javelin.clients.serviceClients;
 
 import site.itprohub.javelin.common.ResourceLock;
-import site.itprohub.javelin.data.DbContext;
 import site.itprohub.javelin.utils.StringExtensions;
 import site.itprohub.javelin.data.config.DbConfigUtils;
+import site.itprohub.javelin.data.context.DbContext;
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -77,18 +77,22 @@ public class MoonClient implements IConfigClient {
     }
 
     private String getSettingByDb(String name) {
-        try ( DbContext db = DbConfigUtils.CreateConfigDbContext() ) {
-            String value = db.CPQuery().create("select value from settings where name = ?", name).executeScalar(String.class);
-            if (StringExtensions.isNullOrEmpty(value) == false) {
-                settingsCache.set(name, value, Instant.now().plusSeconds(MoonClientOptions.settingsCacheSeconds)); // 可选：写入缓存
-            }
+        try{
+            try ( DbContext db = DbConfigUtils.CreateConfigDbContext() ) {
+                String value = db.CPQuery().create("select value from settings where name = ?", name).executeScalar(String.class);
+                if (StringExtensions.isNullOrEmpty(value) == false) {
+                    settingsCache.set(name, value, Instant.now().plusSeconds(MoonClientOptions.settingsCacheSeconds)); // 可选：写入缓存
+                }
 
-            return value;
-        } catch (SQLException e) {
+                return value;
+            }
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
+        
+        
     }
 
     private DbConfig getDbConfig(String name) {

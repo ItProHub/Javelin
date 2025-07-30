@@ -2,7 +2,7 @@ package site.itprohub.javelin.data.command;
 
 import java.util.Arrays;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class CPQueryFactory {
     private final DbContext dbContext;

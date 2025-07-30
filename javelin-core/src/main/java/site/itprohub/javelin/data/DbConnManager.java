@@ -2,11 +2,10 @@ package site.itprohub.javelin.data;
 
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import site.itprohub.javelin.data.config.DbConfig;
 import site.itprohub.javelin.data.config.DbConfigProvider;
-import site.itprohub.javelin.data.datasource.DataSourceRegistry;
+import site.itprohub.javelin.data.context.ConnectionInfo;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class DbConnManager {
 
@@ -27,9 +26,13 @@ public class DbConnManager {
 
         DbConfig dbConfig = getAppDbConfig(dbName);
 
-        DataSource dataSource = DataSourceRegistry.getDataSource(dbName, dbConfig);
+        // DataSource dataSource = DataSourceRegistry.getDataSource(dbName, dbConfig);
 
-        return new DbContext(dataSource);
+        // Connection conn = DriverManager.getConnection(dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
+
+        ConnectionInfo connInfo = new ConnectionInfo(dbConfig);
+
+        return new DbContext(connInfo);
     }
 
 }

@@ -1,11 +1,7 @@
 package site.itprohub.javelin.rest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -14,8 +10,9 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import site.itprohub.javelin.annotations.GetMapping;
+import site.itprohub.javelin.annotations.HttpGet;
 import site.itprohub.javelin.annotations.RestController;
+import site.itprohub.javelin.annotations.Route;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 
 public class RouterTest {
@@ -43,7 +40,8 @@ public class RouterTest {
 
     @RestController
     public static class TestController {
-        @GetMapping("/hello")
+        @HttpGet
+        @Route("/hello")
         public void hello(NHttpContext context) {
             // 可加打印或mock验证
         }

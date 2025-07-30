@@ -1,4 +1,4 @@
-package site.itprohub.javelin.entity;
+package site.itprohub.javelin.data.entity;
 
 import java.math.BigDecimal;
 
@@ -18,4 +18,17 @@ public class Employee {
 
     @DbColumn
     private BigDecimal salary;
+
+    public Employee() {
+    }
+
+    public Employee(String name, String position, BigDecimal salary) {
+        this.name = name;
+        this.position = position;
+        this.salary = salary;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 }

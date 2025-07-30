@@ -2,14 +2,15 @@ package site.itprohub.javelin.data.config;
 
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
 
-import site.itprohub.javelin.data.DbContext;
-import site.itprohub.javelin.data.datasource.DataSourceRegistry;
+import site.itprohub.javelin.data.context.ConnectionInfo;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class DbConfigUtils {
     public static DbContext CreateConfigDbContext() throws SQLException {
-        DataSource dataSource = DataSourceRegistry.getDataSource("config", EnvConfig.getDbUrl());
-        return DbContext.create(dataSource);
+        //DataSource dataSource = DataSourceRegistry.getDataSource("config", EnvConfig.getDbUrl());
+        ConnectionInfo conn = new ConnectionInfo(EnvConfig.getDbUrl());
+
+        return DbContext.create(conn);
     }
 }

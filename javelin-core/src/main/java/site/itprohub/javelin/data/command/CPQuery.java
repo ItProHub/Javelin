@@ -1,6 +1,6 @@
 package site.itprohub.javelin.data.command;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class CPQuery extends BaseCommand {
 

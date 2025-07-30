@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
 
+import site.itprohub.javelin.data.multidb.DatabaseClients;
+
 public class DbConfigTest {
 
     @Test
@@ -36,7 +38,7 @@ public class DbConfigTest {
         dbConfig.dbName = "test";
         dbConfig.port = 3307;
 
-        assertEquals(dbConfig.getUrl(), "jdbc:mysql://localhost:3307/test");
+        assertEquals("jdbc:mysql://localhost:3307/test", dbConfig.getUrl());
     }
 
     @Test
@@ -44,7 +46,7 @@ public class DbConfigTest {
         DbConfig dbConfig = new DbConfig();
         dbConfig.dbType = "mysql";
 
-        assertEquals(dbConfig.getDriverClassName(), "com.mysql.cj.jdbc.Driver"); 
+        assertEquals(dbConfig.getDriverClassName(), DatabaseClients.MYSQL); 
     }
 
     @Test

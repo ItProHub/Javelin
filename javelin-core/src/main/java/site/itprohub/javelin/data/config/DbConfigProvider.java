@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class DbConfigProvider {
 

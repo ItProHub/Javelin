@@ -2,10 +2,11 @@ package site.itprohub.javelin.data.command;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import site.itprohub.javelin.data.DbContext;
+import site.itprohub.javelin.data.context.DbContext;
 import site.itprohub.javelin.data.paging.PageResult;
 
 public abstract class BaseCommand {
@@ -148,9 +149,21 @@ public abstract class BaseCommand {
 
 
     private void setParams(PreparedStatement ps) throws Exception {
+        if (params == null)
+            return;
+            
         for (int i = 0; i < params.size(); i++) {
             ps.setObject(i + 1, params.get(i));
         }
+    }
+
+
+    public PreparedStatement toPreparedStatement() throws SQLException {
+        return execute(() -> {
+            PreparedStatement ps = dbContext.getConnection().prepareStatement(sbSql.toString());
+            setParams(ps);
+            return ps;
+        });
     }
 
 

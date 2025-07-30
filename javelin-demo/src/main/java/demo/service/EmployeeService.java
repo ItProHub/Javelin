@@ -2,8 +2,8 @@ package demo.service;
 
 import demo.data.Employee;
 import site.itprohub.javelin.data.DbConnManager;
-import site.itprohub.javelin.data.DbContext;
 import site.itprohub.javelin.data.command.CPQuery;
+import site.itprohub.javelin.data.context.DbContext;
 
 public class EmployeeService {
     

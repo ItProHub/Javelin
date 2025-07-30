@@ -43,25 +43,47 @@ public class Router {
             if (!clazz.isAnnotationPresent(RestController.class))
                 continue;
 
-            for (Method method : clazz.getDeclaredMethods()) {
-                Annotation[] annotations = method.getAnnotations();
+            // 处理类上的 @Route
+            String classPrefix = "";
+            if (clazz.isAnnotationPresent(Route.class)) {
+                classPrefix = clazz.getAnnotation(Route.class).value();
+            }
 
-                for (Annotation annotation : annotations) {
+            for (Method method : clazz.getDeclaredMethods()) {
+
+                // ✅ 必须有 @Route 注解才能注册
+                if (!method.isAnnotationPresent(Route.class)) {
+                    continue;
+                }
+
+                 // ✅ 查找方法上的 HTTP 方法注解（@GET/@POST 等）
+                String httpMethod = null;
+                for (Annotation annotation : method.getAnnotations()) {
                     HttpMethodMapping mapping = annotation.annotationType().getAnnotation(HttpMethodMapping.class);
                     if (mapping != null) {
-                        String httpMethod = mapping.method();
-
-                        try {
-                            String path = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                            Pattern pathPattern = UrlExtensions.compilePathPattern(path);
-                            List<String> pathVaribleNames = UrlExtensions.extractPathVaribleNames(path);
-                            dynamicRoutes.add(new RouteDefinition(httpMethod, path, pathPattern, pathVaribleNames, clazz, method));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
+                        httpMethod = mapping.method(); // e.g., "GET", "POST"
+                        break; // 一般只有一个
                     }
+                }
+
+                // ✅ 如果没有 GET/POST 等注解就跳过
+                if (httpMethod == null)
+                    continue;
+
+                try {
+                    if (!method.isAnnotationPresent(Route.class)) {
+                        throw new IllegalStateException("缺少 @Route 注解: " + clazz.getName() + "#" + method.getName());
+                    }
+                    String methodPath = method.getAnnotation(Route.class).value();
+                    // 合并类前缀和方法路径
+                    String path = classPrefix + methodPath;
+
+                    Pattern pathPattern = UrlExtensions.compilePathPattern(path);
+                    List<String> pathVaribleNames = UrlExtensions.extractPathVaribleNames(path);
+                    dynamicRoutes.add(new RouteDefinition(httpMethod, path, pathPattern, pathVaribleNames, clazz, method));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

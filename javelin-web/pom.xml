@@ -6,7 +6,7 @@
 
   <groupId>site.itprohub</groupId>
   <artifactId>javelin-web</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.5</version>
   <name>Javelin Web</name>
   <description>Lightweight Java framework</description>
   <url>https://github.com/ItProHub/Javelin</url>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>site.itprohub</groupId>
             <artifactId>javelin-core</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.5</version>
         </dependency>
 
         <dependency>
