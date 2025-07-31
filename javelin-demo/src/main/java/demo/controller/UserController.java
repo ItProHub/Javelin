@@ -1,6 +1,5 @@
 package demo.controller;
 
-import demo.service.EmployeeService;
 import demo.service.UserService;
 import site.itprohub.javelin.annotations.*;
 import site.itprohub.javelin.annotations.parameter.*;
@@ -21,9 +20,9 @@ public class UserController {
     @HttpPost
     @Route("/user/add")
     @AllowAnonymous
-    public int create(@FromBody Employee employee) throws Exception {
+    public long create(@FromBody Employee employee) throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).insert(employee);
+            return db.Entity().insert(employee);
         }
     }
 

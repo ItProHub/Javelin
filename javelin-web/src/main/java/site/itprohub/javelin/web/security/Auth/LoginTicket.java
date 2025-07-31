@@ -5,21 +5,21 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import site.itprohub.javelin.dto.WebUserInfo;
+import site.itprohub.javelin.dto.BaseUserInfo;
 
 public final class LoginTicket {
 
-    private WebUserInfo user;
+    private BaseUserInfo user;
     private String issuer;
     private long iat;
     private long exp;
 
     // --- getters/setters ---
-    public WebUserInfo getUser() {
+    public BaseUserInfo getUser() {
         return user;
     }
 
-    public void setUser(WebUserInfo user) {
+    public void setUser(BaseUserInfo user) {
         this.user = user;
     }
 

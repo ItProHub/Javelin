@@ -6,7 +6,7 @@
 
   <groupId>site.itprohub</groupId>
   <artifactId>javelin-core</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.9</version>
   <name>Javelin Core</name>
   <description>Lightweight Java framework</description>
   <url>https://github.com/ItProHub/Javelin</url>

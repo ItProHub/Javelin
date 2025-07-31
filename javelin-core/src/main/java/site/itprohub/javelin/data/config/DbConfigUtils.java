@@ -11,6 +11,6 @@ public class DbConfigUtils {
         //DataSource dataSource = DataSourceRegistry.getDataSource("config", EnvConfig.getDbUrl());
         ConnectionInfo conn = new ConnectionInfo(EnvConfig.getDbUrl());
 
-        return DbContext.create(conn);
+        return new DbContext(conn);
     }
 }

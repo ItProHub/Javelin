@@ -24,9 +24,9 @@ public class EmployeeController {
     @HttpPost
     @Route("/employee/add")
     @AllowAnonymous
-    public int create(@FromBody Employee employee) throws Exception {
+    public long create(@FromBody Employee employee) throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).insert(employee);
+            return db.Entity().insert(employee);
         }
     }
 
@@ -35,7 +35,7 @@ public class EmployeeController {
     @AllowAnonymous
     public int update(@FromBody Employee employee) throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).update(employee);
+            return db.Entity().update(employee);
         }
     }
 
@@ -58,7 +58,7 @@ public class EmployeeController {
     @AllowAnonymous
     public int delete(@FromRoute int id) throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).delete(id);
+            return db.Entity(Employee.class).deleteByKey(id);
         }
     }
 
@@ -67,7 +67,7 @@ public class EmployeeController {
     @AllowAnonymous
     public List<Employee> list() throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).where("salary > ?", 1000).toList();
+            return db.Entity(Employee.class).where("salary > ?", 1000).toList();
         }
     }
 }

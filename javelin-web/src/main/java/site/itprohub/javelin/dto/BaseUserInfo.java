@@ -1,8 +1,13 @@
 package site.itprohub.javelin.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import site.itprohub.javelin.utils.StringExtensions;
+
 /**
  * 用户信息接口
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class BaseUserInfo {
 
     private String userId;
@@ -53,12 +58,12 @@ public abstract class BaseUserInfo {
     }
 
     public void validate() {
-        if (userId.isBlank()) {
+        if (StringExtensions.isNullOrEmpty(userId)) {
             throw new IllegalArgumentException("userId不能为空");
         }
 
-        if (userName.isBlank()) {
-            throw new IllegalArgumentException("userName不能为空");
+        if (StringExtensions.isNullOrEmpty(userCode)) {
+            throw new IllegalArgumentException("userCode不能为空");
         }
     }
 }

@@ -12,7 +12,6 @@ public class HttpPipelineContext extends BasePipelineContext {
 
     private static final ThreadLocal<HttpPipelineContext> s_local = new ThreadLocal<>();
 
-
     public static HttpPipelineContext start(NHttpContext httpContext) {
         HttpPipelineContext pipelineContext = new HttpPipelineContext(httpContext);
 
@@ -42,7 +41,7 @@ public class HttpPipelineContext extends BasePipelineContext {
         if (ctx == null) {
             throw new IllegalStateException("当前请求没有关联到一个PipelineContext实例");
         }
-        return null;
+        return ctx;
     }
 
     public void setRouteDefinition(RouteDefinition routeDefinition) {

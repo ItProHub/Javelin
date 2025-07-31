@@ -36,8 +36,8 @@ public class AuthorizeModule extends NHttpModule {
 
         httpContext.response.setHeader("X-Response-ErrorCode", "NotLogin");
         httpContext.response.setStatus(401); // 未登录，返回401状态码
-        httpContext.response.getWriter().write("Please login."); // 未登录，返回错误信息
-        httpContext.response.getWriter().close(); // 关闭输出流
+        httpContext.response.write("Please login."); // 未登录，返回错误信息
+        httpContext.response.close(); // 关闭输出流
 
         httpContext.pipelineContext.completeRequest();
         return false;

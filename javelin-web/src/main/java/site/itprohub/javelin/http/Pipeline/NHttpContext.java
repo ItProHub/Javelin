@@ -7,8 +7,6 @@ import site.itprohub.javelin.log.OprLog;
 import site.itprohub.javelin.log.OprLogScope;
 import site.itprohub.javelin.rest.RouteDefinition;
 import site.itprohub.javelin.web.security.Auth.NPrincipal;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class NHttpContext {
 
@@ -20,9 +18,9 @@ public abstract class NHttpContext {
 
     public boolean skipAuthentication;
 
-    public HttpServletRequest request;
+    public HttpRequest request;
 
-    public HttpServletResponse response;
+    public HttpResponse response;
 
     public NPrincipal user;
 
@@ -41,6 +39,13 @@ public abstract class NHttpContext {
         this.pipelineContext.routeDefinition = routeDefinition; 
     }
 
+    public BaseUserInfo getUserInfo() {
+        if (user != null && user.ticket != null  && user.ticket.getUser() != null) {
+            return user.ticket.getUser();
+        }
+        return null;
+    }
+
     void setOprLogScope(OprLogScope oprLogScope) {
         this.oprLogScope = oprLogScope;
     }
@@ -50,7 +55,7 @@ public abstract class NHttpContext {
             this.response.setContentType("text/plain; chatset=UTF-8");
             this.response.setCharacterEncoding("UTF-8");
             this.response.setStatus(statusCode);
-            this.response.getWriter().write(message);
+            this.response.write(message);
         } catch (IOException e) {
             e.printStackTrace();
         }

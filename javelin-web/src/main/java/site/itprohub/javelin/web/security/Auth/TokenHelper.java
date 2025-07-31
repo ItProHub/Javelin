@@ -1,6 +1,5 @@
 package site.itprohub.javelin.web.security.Auth;
 
-import jakarta.servlet.http.Cookie;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 import site.itprohub.javelin.utils.StringExtensions;
 
@@ -11,6 +10,11 @@ public class TokenHelper {
         }
 
         String token = httpContext.request.getHeader(AuthOptions.headerName);
+
+        // 尝试从cookie里面获取token
+        if (StringExtensions.isNullOrEmpty(token)) {
+            token = httpContext.request.cookie(AuthOptions.cookieName);
+        }
 
         if ( StringExtensions.isNullOrEmpty(token) == false ) {
             setContextUser(httpContext, token, LoginTicketSource.HEADER);
@@ -30,9 +34,7 @@ public class TokenHelper {
     }
 
     public static void writeCookie(String token, int expirationSeconds, NHttpContext httpContext) {
-        Cookie cookie = new Cookie(AuthOptions.cookieName, token);
-        cookie.setMaxAge(expirationSeconds);
-        httpContext.response.addCookie(cookie);
+        httpContext.response.setCookie(AuthOptions.cookieName, token, expirationSeconds);
     }
 
 

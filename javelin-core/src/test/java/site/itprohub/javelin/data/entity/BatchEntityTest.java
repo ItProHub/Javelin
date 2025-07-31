@@ -38,7 +38,7 @@ public class BatchEntityTest {
     void testBatchUpdate() {
         try(DbContext dbContext = DbConnManager.createAppDb("test")){
 
-            List<Employee> employees = dbContext.Entity().create(Employee.class)
+            List<Employee> employees = dbContext.Entity(Employee.class)
                 .where("name in ('test1','test2')")                
                 .toList();
 

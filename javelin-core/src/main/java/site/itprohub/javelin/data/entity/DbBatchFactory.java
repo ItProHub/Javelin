@@ -88,16 +88,16 @@ public class DbBatchFactory {
 
         switch (kind) {
             case INSERT -> {
-                sql = EntityCudUtils.getInsertSQL(first.getClass(), dbContext);
+                sql = EntityCurdUtils.getInsertSQL(first.getClass(), dbContext);
                 for (T entity : list) {
-                    paramList.add(Arrays.asList(EntityCudUtils.getInsertParams(entity, dbContext)).toArray());
+                    paramList.add(Arrays.asList(EntityCurdUtils.getInsertParams(entity, dbContext)).toArray());
                 }
             }
             case UPDATE -> {
                 // 不支持统一批更新语句，因为每个字段可能不同，仍逐条执行
                 int total = 0;
                 for (T entity : list) {
-                    CPQuery query = EntityCudUtils.getUpdateQuery(entity, dbContext);
+                    CPQuery query = EntityCurdUtils.getUpdateQuery(entity, dbContext);
                     try (PreparedStatement stmt = query.toPreparedStatement()) {
                         total += stmt.executeUpdate();
                     }

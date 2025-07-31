@@ -9,6 +9,7 @@ import site.itprohub.javelin.data.command.CPQueryFactory;
 import site.itprohub.javelin.data.config.DbConfig;
 import site.itprohub.javelin.data.entity.DbBatchFactory;
 import site.itprohub.javelin.data.entity.EntityFactory;
+import site.itprohub.javelin.data.entity.EntityQuery;
 import site.itprohub.javelin.data.multidb.BaseClientProvider;
 import site.itprohub.javelin.data.multidb.DbClientFactory;
 
@@ -41,6 +42,7 @@ public class DbContext implements AutoCloseable {
         return new DbContext(new ConnectionInfo(dbConfig));
     }
 
+
     public Connection getConnection() {
         if(_isDisposed) {
             throw new RuntimeException("db connection is disposed!");
@@ -69,9 +71,6 @@ public class DbContext implements AutoCloseable {
 
     private CPQueryFactory queryFactory;
 
-    private EntityFactory entityFactory;
-
-
     public CPQueryFactory CPQuery() {
         if (queryFactory == null) {
             queryFactory = new CPQueryFactory(this);
@@ -79,6 +78,8 @@ public class DbContext implements AutoCloseable {
 
         return queryFactory;
     }
+
+    private EntityFactory entityFactory;
 
     public EntityFactory Entity() {
         if (entityFactory == null) {
@@ -88,9 +89,8 @@ public class DbContext implements AutoCloseable {
         return entityFactory;
     }
 
-
-    public static DbContext create(ConnectionInfo connInfo) throws SQLException {
-        return new DbContext(connInfo);
+    public <T> EntityQuery<T> Entity(Class<T> entityType) {
+        return new EntityQuery<T>(this, entityType);
     }
 
     // 批量操作

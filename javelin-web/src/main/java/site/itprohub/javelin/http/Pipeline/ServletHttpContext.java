@@ -7,8 +7,8 @@ public class ServletHttpContext extends NHttpContext {
 
     public ServletHttpContext(HttpServletRequest request, HttpServletResponse response) {
         super();
-        this.request = request;
-        this.response = response;
+        this.request = new HttpRequest(request, this);
+        this.response = new HttpResponse(response, this);
     }
 
     // 提供 getHeader, getMethod, getPath, getBodyStream 等

@@ -16,7 +16,7 @@ public class EmployeeService {
 
    public Employee getEmployeeEntity(int id) throws Exception {
         try(DbContext db = DbConnManager.createAppDb("test")) {
-            return db.Entity().create(Employee.class).findById(id);
+            return db.Entity(Employee.class).getByKey(id);
         }
     }
 }

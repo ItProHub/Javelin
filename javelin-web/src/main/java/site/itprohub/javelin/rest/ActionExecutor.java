@@ -14,6 +14,7 @@ import site.itprohub.javelin.annotations.parameter.FromBody;
 import site.itprohub.javelin.annotations.parameter.FromQuery;
 import site.itprohub.javelin.annotations.parameter.FromRoute;
 import site.itprohub.javelin.http.Pipeline.AbortRequestException;
+import site.itprohub.javelin.http.Pipeline.HttpResponse;
 import site.itprohub.javelin.http.Pipeline.NHttpApplication;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 import site.itprohub.javelin.utils.StringExtensions;
@@ -73,7 +74,7 @@ public class ActionExecutor {
 
     private void handlerRequest(NHttpContext context) throws Exception {
         RouteDefinition route = context.pipelineContext.routeDefinition;
-        HttpServletResponse response = context.response;
+        HttpResponse response = context.response;
 
         // 校验请求方法的合法性
         if (!route.httpMethod.equalsIgnoreCase(context.getMethod())) {
@@ -102,18 +103,18 @@ public class ActionExecutor {
         String responseBody;
         if(returnType == String.class || returnType == void.class || returnType == int.class) {
             responseBody = result.toString();
-            context.response.addHeader("Content-Type", "text/plain; charset=UTF-8");
+            context.response.setHeader("Content-Type", "text/plain; charset=UTF-8");
         } else {
             responseBody = gson.toJson(result);
-            context.response.addHeader("Content-Type", "application/json; charset=UTF-8");
+            context.response.setHeader("Content-Type", "application/json; charset=UTF-8");
         }
 
         byte[] responseBytes = responseBody.getBytes(StandardCharsets.UTF_8);
 
         response.setStatus(200);
         response.setContentLength(responseBytes.length);
-        response.getWriter().write(responseBody);
-        response.getWriter().flush();
+        response.write(responseBody);
+        response.flush();
         
     }
 

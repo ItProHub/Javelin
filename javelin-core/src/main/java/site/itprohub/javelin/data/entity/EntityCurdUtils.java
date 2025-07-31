@@ -8,9 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EntityCudUtils {
+public class EntityCurdUtils {
 
     private static final Map<String, String> insertSqlCache = new ConcurrentHashMap<>();
+
+    public static <T> T createEntity(Class<T> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception ex) {
+            throw new RuntimeException("实例化失败: " + clazz.getName(), ex);
+        }
+    }
 
     public static <T> CPQuery getInsertQuery(T entity, DbContext dbContext) {
         checkArgs(entity, dbContext);
@@ -89,4 +97,34 @@ public class EntityCudUtils {
         if (entity == null) throw new IllegalArgumentException("实体不能为空");
         if (dbContext == null) throw new IllegalArgumentException("DbContext不能为空");
     }
+
+    public static <T> CPQuery getDeleteQuery(Class<T> entityType, Object key, DbContext dbContext) {
+        EntityDescription desc = EntityDescriptionCache.get(entityType);
+        String tableName = desc.getTableName();
+
+        ColumnInfo pk = desc.getPrimaryKey();
+
+        if (pk == null) {
+            throw new IllegalStateException("实体类未定义主键：" + entityType.getName());
+        }
+        // 假设主键为 id
+        String sql = String.format("DELETE FROM %s WHERE %s = ?", tableName, pk.getDbName());
+        return dbContext.CPQuery().create(sql, key);
+    }
+
+    public static <T> CPQuery getSelectQuery(Class<T> entityType, Object key, DbContext dbContext) {
+        EntityDescription desc = EntityDescriptionCache.get(entityType);
+        String tableName = desc.getTableName();
+
+        ColumnInfo pk = desc.getPrimaryKey();
+
+        if (pk == null) {
+            throw new IllegalStateException("实体类未定义主键：" + entityType.getName());
+        }
+        // 默认主键字段为 "id"
+        String sql = String.format("SELECT * FROM %s WHERE %s = ?", tableName, pk.getDbName());
+        return dbContext.CPQuery().create(sql, key);
+    }
+
+
 }

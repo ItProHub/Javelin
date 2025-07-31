@@ -119,7 +119,7 @@ public class Router {
         if (matchedRoute == null) {
             // 匹配不到404
             httpContext.response.setStatus(404);
-            httpContext.response.getWriter().write("page not found");
+            httpContext.response.write("page not found");
             return;
         }
 

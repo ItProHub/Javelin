@@ -13,6 +13,6 @@ public class DefaultRootHandler {
         String text = "This is "+ EnvUtils.ApplicationName +", It's worked! \n" +
         "Server time: " + LocalDateTime.now().format(formatter);
 
-        context.response.getWriter().write(text);
+        context.response.write(text);
     }
 }

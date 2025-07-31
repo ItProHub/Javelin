@@ -2,7 +2,7 @@ package site.itprohub.javelin.web.security.Auth;
 
 import jakarta.servlet.http.Cookie;
 import site.itprohub.javelin.base.config.Settings;
-import site.itprohub.javelin.dto.WebUserInfo;
+import site.itprohub.javelin.dto.BaseUserInfo;
 import site.itprohub.javelin.http.Pipeline.HttpPipelineContext;
 import site.itprohub.javelin.http.Pipeline.NHttpContext;
 import site.itprohub.javelin.utils.EnvUtils;
@@ -15,7 +15,7 @@ public class AuthenticationManager
 {
     private static String s_SecretKey = Settings.getSetting("Javelin_Authentication_SecretKey", true);
 
-    public static String login(WebUserInfo userInfo, int expirationSeconds)
+    public static String login(BaseUserInfo userInfo, int expirationSeconds)
     {
         String token = getLoginToken(userInfo, expirationSeconds);
 
@@ -29,7 +29,7 @@ public class AuthenticationManager
     }
 
 
-    public static String getLoginToken(WebUserInfo userInfo, int expirationSeconds) {
+    public static String getLoginToken(BaseUserInfo userInfo, int expirationSeconds) {
         if (userInfo == null) {
             throw new IllegalArgumentException("userInfo is required");
         }
@@ -67,9 +67,7 @@ public class AuthenticationManager
         HttpPipelineContext ctx = HttpPipelineContext.current();
 
         NHttpContext httpContext = ctx.httpContext;
-        Cookie cookie = new Cookie(AuthOptions.cookieName, "");
-        cookie.setMaxAge(0);
-        httpContext.response.addCookie(cookie);
+        httpContext.response.setCookie(AuthOptions.cookieName, "", 0);
     }
 
 
